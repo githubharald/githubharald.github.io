@@ -1,1 +1,142 @@
-"Hello World" 
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8"/>
+	<title>Harald Scheidl: Repositories and Articles</title>
+	<link rel="stylesheet" href="skeleton.css">
+</head>
+
+<body>
+
+<!--center-->
+<div class="container">
+<section class="header">
+
+<!--content-->
+<h1>Welcome</h1>
+<p>
+My name is Harald Scheidl and I showcase my GitHub repositories on this website.
+Some of the codes are designed for productive use, others are more prototype-like and yet others are just for fun.
+</p>
+
+<!--htr-->
+<h2>Text recognition</h2>
+
+<p>
+There are 5 repositories related to text recognition. 
+To get started with text recognition, you need a model which outputs the text contained in an image.
+The results can be improved by using a dictionary and/or language model in the decoding step.
+You might also need some preprocessing: if you have long text lines, you first have to segment them into words.
+And if the text is written in a cursive style, setting the text up-right possibly improves the results.
+</p>
+
+<!--grid-->
+<div class="container">
+
+	<!--row1-->
+	<div class="row">
+
+		<div class="one-half column">
+			<h4>SimpleHTR</h4>
+			<a href="https://github.com/githubharald/SimpleHTR"><img src="img/SimpleHTR.png" width="100%"/></a>
+			<p>
+				A neural network which recognizes text contained in images.
+				The network consists of CNN, RNN and CTC layers and is implemented using Python and TensorFlow.
+				The network is kept small (outputs at most 32 characters) by purpose to be trainable on CPUs in reasonable time.
+			</p>
+		</div>
+		
+		
+		<div class="one-half column">
+			<h4>CTCWordBeamSearch</h4>
+			<a href="https://github.com/githubharald/CTCWordBeamSearch"><img src="img/CTCWordBeamSearch.png" width="100%"/></a>
+			<p>
+				A CTC decoding algorithm which uses a dictionary to constrain recognized words, but at the same time allows arbitrary character strings (e.g. numbers) between words.
+				Results are improved compared to other decoders if a suitable dictionary and/or language model is available.
+				Implemented with C++ and Python, can be integrated into TensorFlow as a custom operation.
+			</p>
+		</div>
+	</div>
+	<!--row1 end-->
+	
+	<!--row2-->
+	<div class="row">
+	
+		<div class="one-half column">
+			<h4>CTCDecoder</h4>
+			<a href="https://github.com/githubharald/CTCDecoder"><img src="img/CTCDecoder.png" width="100%"/></a>
+			<p>
+				Some well-known CTC decoders implemented in Python: best path decoding, prefix search decoding, beam search decoding, token passing and lexicon search.
+				Additionally, the CTC loss function is included (however, without any back-propagation).
+			</p>
+		</div>
+		
+		<div class="one-half column">
+			<h4>DeslantImg</h4>
+			<a href="https://github.com/githubharald/DeslantImg"><img src="img/DeslantImg.png" width="100%"/></a>
+			<p>
+				Deslanting sets text upright (i.e. minimizes the slant angle of text).
+				This can be used if a text is written with a cursive writing style. 
+				It might or might not improve the recognition results (depends on the data, you have to do experiments to see if it makes sense in your case).
+				Implemented in C++ and OpenCL.
+			</p>
+		</div>
+	
+	</div>
+	<!--row2 end-->
+	
+	<!--row3-->
+	<div class="row">
+	
+		<div class="one-half column">
+			<h4>WordSegmentation</h4>
+			<a href="https://github.com/githubharald/WordSegmentation"><img src="img/WordSegmentation.png" width="100%"/></a>
+			<p>
+				The SimpleHTR model is kept small for performance-reasons and can recognize 32 characters at most.
+				If you need to do text recognition on text-lines or sentences, you can first split the text-line into words and then feed each word separately into the classifier.
+				This repository does exactly this: it segments a line of text into words.
+				Implemented in Python.
+			</p>
+		</div>
+		
+	</div>
+	
+</div>
+<!--grid end-->
+
+
+<!--other-->
+<h2>Other stuff</h2>
+
+<!--grid-->
+<div class="container">
+
+	<!--row1-->
+	<div class="row">		
+		
+		<div class="one-half column">
+			<h4>ParticleSystem</h4>
+			<a href="https://github.com/githubharald/ParticleSystem"><img src="img/ParticleSystem.gif" width="100%"/></a>
+			<p>
+				An endless volcano-fountain firework implemented as a particle system using OpenCL.
+			</p>
+		</div>
+	</div>
+	<!--row1 end-->
+</div>
+<!--grid end-->
+
+<!--
+<h2>Articles</h2>
+<p>TODO</p>
+-->
+
+<!--content end-->
+</section>
+</div>
+<!--center end-->
+
+</body>
+</html>
+
