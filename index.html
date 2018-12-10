@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8"/>
-	<title>Harald Scheidl: Repositories and Articles</title>
+	<title>Repositories and Articles of Harald Scheidl</title>
 	<link rel="stylesheet" href="skeleton.css">
 </head>
 
@@ -16,8 +16,9 @@
 <!--content-->
 <h1>Welcome</h1>
 <p>
-My name is Harald Scheidl and I showcase my GitHub repositories on this website.
-Some of the codes are designed for productive use, others are more prototype-like and yet others are just for fun.
+My name is Harald Scheidl and I showcase my GitHub repositories on this website:
+some of the codes are designed for productive use, others are more prototype-like and yet others are just for fun.
+Further, I list my Towards Data Science articles.
 If you want to contact me, here is my email:
 </p>
 <pre>python -c "print('%s_%s@hotmail.com'%('harald','scheidl'))"</pre>
@@ -130,10 +131,89 @@ If you want to contact me, here is my email:
 </div>
 <!--grid end-->
 
-<!--
+
 <h2>Articles</h2>
-<p>TODO</p>
--->
+
+<!--grid-->
+<div class="container">
+
+	<!--row1-->
+	<div class="row">		
+		
+		<div class="one-half column">
+			<h4>Build a Handwritten Text Recognition System using TensorFlow</h4>
+			<a href="https://towardsdatascience.com/2326a3487cd5"><img src="img/ArticleHTR.png" width="100%"/></a>
+			<p>
+				This article explains how to build a  modern (handwritten) text recognition system.
+				Besides a theoretical introduction, the code of the SimpleHTR repository is discussed.
+			</p>
+		</div>
+		
+		<div class="one-half column">
+			<h4>FAQ: Build a Handwritten Text Recognition System using TensorFlow</h4>
+			<a href="https://towardsdatascience.com/27648fb18519"><img src="img/ArticleHTRFAQ.png" width="100%"/></a>
+			<p>
+				There were some questions regarding the last article which are discussed here:
+				how to use custom datasets, how to detect text on line-level and how to compute a confidence score for the recognized text.
+			</p>
+		</div>
+		
+	</div>
+	<!--row1 end-->
+
+	<!--row2-->
+	<div class="row">		
+		
+		<div class="one-half column">
+			<h4>An Intuitive Explanation of Connectionist Temporal Classification</h4>
+			<a href="https://towardsdatascience.com/3797e43a86c"><img src="img/ArticleCTC.png" width="100%"/></a>
+			<p>
+				CTC is an essential part of modern text and speech recognition systems.
+				This article explains how CTC works without hiding the clever ideas it is based on behind complicated formulas.
+			</p>
+		</div>
+		
+		<div class="one-half column">
+			<h4>Beam Search Decoding in CTC-trained Neural Networks</h4>
+			<a href="https://towardsdatascience.com/5a889a3d85a7"><img src="img/ArticleBeamSearch.png" width="100%"/></a>
+			<p>
+				To get the recognized text from a CTC-trained neural network, its output must be decoded.
+				Beam search decoding is a fast and well-performing algorithm which optionally can integrated a character-level language model.
+			</p>
+		</div>
+		
+	</div>
+	<!--row2 end-->
+	
+	<!--row3-->
+	<div class="row">		
+		
+		<div class="one-half column">
+			<h4>Word Beam Search: A CTC Decoding Algorithm</h4>
+			<a href="https://towardsdatascience.com/b051d28f3d2e"><img src="img/ArticleWordBeamSearch.png" width="100%"/></a>
+			<p>
+				Word beam search is an extension to the vanilla beam search algorithm.
+				It avoids spelling mistakes of words, allows arbitrary numbers and punctuation marks between words and optionally makes use of a word-level language model.
+				This article gives a high-level overview of how the algorithm works.
+			</p>
+		</div>
+		
+		<div class="one-half column">
+			<h4>GPU Image Processing using OpenCL</h4>
+			<a href="https://towardsdatascience.com/15e34b787480"><img src="img/ArticleGPUImgProc.png" width="100%"/></a>
+			<p>
+				Many image processing operations benefit from being processed in parallel.
+				This article shows how to boost dilation and erosion by implementing them for the GPU using OpenCL.
+			</p>
+		</div>
+		
+	</div>
+	<!--row3 end-->
+	
+	
+	
+</div>
+<!--grid end-->
 
 <!--content end-->
 </section>
