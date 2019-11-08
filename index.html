@@ -16,12 +16,20 @@
 <!--content-->
 <h1>Welcome</h1>
 <p>
-My name is Harald Scheidl and I showcase my GitHub repositories on this website:
-some of the codes are designed for productive use, others are more prototype-like and yet others are just for fun.
-Further, I list my Towards Data Science articles.
+My name is Harald Scheidl.
+During my thesis I worked on handwritten text recognition with neural network. 
+On this page I show:
+<ul>
+	<li>parts of the code from the thesis (I open-sourced most of the Python code, while keeping C++ and GPU code mostly closed-source)</li>
+	<li>thesis on handwritten text recognition and a paper about a novel CTC decoding algorithm</li>
+	<li>articles published on Towards Data Science, which are polished-up notes I made during the thesis on different topics relevant to me</li>
+</ul>
+
+
 If you want to contact me, here is my email:
-</p>
 <pre>python -c "print('%s_%s@hotmail.com'%('harald','scheidl'))"</pre>
+</p>
+
 
 <!--htr-->
 <h2>Text recognition</h2>
@@ -38,7 +46,7 @@ If you want to contact me, here is my email:
 			<p>
 				A neural network which recognizes text contained in images.
 				The network consists of CNN, RNN and CTC layers and is implemented using Python and TensorFlow.
-				The network is kept small (outputs at most 32 characters) by purpose to be trainable on CPUs in reasonable time.
+				The network is kept small (outputs a sequence of at most 32 characters) by purpose to be trainable on CPUs in reasonable time.
 			</p>
 		</div>
 		
@@ -101,35 +109,51 @@ If you want to contact me, here is my email:
 <!--grid end-->
 
 
-<!--other-->
-<h2>GPU computing</h2>
+<h2>Thesis and paper</h2>
 
 <!--grid-->
 <div class="container">
 
-	<!--row1-->
 	<div class="row">		
 		
 		<div class="one-half column">
-			<h4>ParticleSystem</h4>
-			<a href="https://github.com/githubharald/ParticleSystem"><img src="img/ParticleSystem.gif" width="100%"/></a>
+			<h4>Thesis</h4>
+			<a href="https://repositum.tuwien.ac.at/obvutwhs/content/titleinfo/2874742"><img src="img/Thesis.png" width="100%"/></a>
 			<p>
-				A firework-like particle system implemented with OpenCL.
+				<ul>
+					<li>Title: "Handwritten text recognition in historical documents"</li>
+					<li>Contributions</li>
+					<ul>
+						<li>Analysis of different neural network architectures and parameters</li>
+						<li>Word segmentation using the output of the RNN layers</li>
+						<li>CNN-based replacement of the RNN layers (enabling a purely convolutional architecture)</li>
+						<li>Constrained CTC decoding algorithm (see paper for more details)</li>
+					</ul>
+				</ul>
 			</p>
 		</div>
 		
 		<div class="one-half column">
-			<h4>GPUImageProcessingArticle</h4>
-			<a href="https://github.com/githubharald/GPUImageProcessingArticle"><img src="img/GPUImageProcessingArticle.png" width="100%"/></a>
+			<h4>Paper</h4>
+			<a href="https://repositum.tuwien.ac.at/obvutwoa/content/titleinfo/2774578"><img src="img/Paper.png" width="100%"/></a>
 			<p>
-				Code for the Towards Data Science article about image processing on the GPU using OpenCL. 
+				<ul>
+					<li>Title: "Word Beam Search: A Connectionist Temporal Classification Decoding Algorithm"</li>
+					<li>Presented at the 16th International Conference on Frontiers in Handwriting Recognition, 2018, Niagara Falls, USA</li>
+					<li>Properties of proposed algorithm</li>
+					<ul>
+						<li>Decodes output of CTC-trained neural network</li>
+						<li>Words constrained by dictionary</li>
+						<li>Allows arbitrary number of non-word characters between words</li>
+						<li>Optional word-level language model</li>
+						<li>Faster than token passing</li>
+					</ul>
+				</ul>
 			</p>
 		</div>
 		
 	</div>
-	<!--row1 end-->
 </div>
-<!--grid end-->
 
 
 <h2>Articles</h2>
