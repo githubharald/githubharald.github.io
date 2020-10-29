@@ -39,17 +39,12 @@
 			<h2>Single precision floating point numbers</h2>
 
 			<p>
-				A floating point number f is represented as \(f=s \cdot m \cdot 2^e = s \cdot m \cdot 2^{E-127}\). Here
-				s is the sign (+, -), m
-				is the
-				mantissa (digit string of the number with \(1.0 \le m \lt 2.0\)), e is the exponent and E is the
-				&quot;biased&quot;
-				exponent
-				which is actually stored in memory. As an example, \(3=+1.5 \cdot 2^1\), so s=+, m=5, e=1 and E=128. A
-				single
-				precision
-				floating point number (or float32 for short) consists of 32bit, using 1bit for the sign s, 8bit for the
-				biased exponent E, and 23bit for the mantissa.
+				A floating point number f is represented as \(f=s \cdot m \cdot 2^e = s \cdot m \cdot 2^{E-127}\). 
+				Here s is the sign (+, -), m is the mantissa (digit string of the number with \(1.0 \le m \lt 2.0\)), 
+				e is the exponent and E is the &quot;biased&quot; exponent which is actually stored in memory. 
+				As an example, \(3=+1.5 \cdot 2^1\), so s=+, m=1.5, e=1 and E=128. A single precision
+				floating point number (or float32 for short) consists of 32bits, using 1bit for the sign s, 
+				8bit for the biased exponent E, and 23bit for the mantissa.
 
 			<p>
 				<img src="fast_inv_sqrt/float32.png" width="33%" class="center">
@@ -66,9 +61,7 @@
 				compute \(\frac{1}{\sqrt{x}} =
 				\frac{1}{\sqrt{m \cdot 2^e}} = \frac{1}{\sqrt{m}} \cdot 2^{-e/2}\). A simple approximation would be to
 				ignore the mantissa and just care about the
-				exponent. Then we have \(\frac{1}{\sqrt{x}} \approx 2^{-e/2}\). This approximation is correct if m=1. We
-				assume positive x and
-				ignore the sign bit from now on.
+				exponent. Then we have \(\frac{1}{\sqrt{x}} \approx 2^{-e/2}\). This approximation is correct if m=1.
 			</p>
 
 			<h2>Implementing the approximation using &quot;bit-magic&quot;</h2>
@@ -102,7 +95,7 @@
 					introduced by this 0.5 offset</li>
 				<li>As the exponent field starts at bit 23, we have to shift all values 23 bits to the left (e.g.,
 					190&lt;&lt;23), however, as this is not important for the discussion it is ignored for now</li>
-				<li>In summary we have \(e_{magic} = 190 - \lfloor E/2 \rfloor - 127\), with \(2^{e_{magic}}\) the
+				<li>In summary we have \(e_{M} = 190 - \lfloor E/2 \rfloor - 127\), with \(2^{e_{M}}\) the
 					approximation computed for \(\frac{1}{\sqrt{x}}\)</li>
 			</ul>
 
@@ -115,21 +108,23 @@
 
 			<h2>Error of the &quot;bit-magic&quot;</h2>
 
-			The value produced by the &quot;bit-magic&quot; is \(2^{e_{magic}}\)
-			with \(e_{magic} = 190 - \lfloor E/2 \rfloor - 127 = - \lfloor(e+127)/2 \rfloor + 63\).
-			There are two cases to distinguish, depending on e:
+			The value produced by the &quot;bit-magic&quot; is \(2^{e_{M}}\)
+			with \(e_{M} = 190 - \lfloor E/2 \rfloor - 127 = - \lfloor(e+127)/2 \rfloor + 63\).
+			To get rid of the integer division we have to distinguish two cases:
 
-			\[e_{magic} =
+			\[e_{M} =
 			\begin{cases}
 			-\lfloor (e+127)/2 \rfloor + 63 = -e/2 + 63 - 63 = -e/2 & e \quad even \\
 			-\lfloor (e+127)/2 \rfloor + 63 = -(e+127)/2 = -e/2 -63.5 + 63 = -e/2 - 0.5 & e \quad odd
 			\end{cases}
 			\]
 
-			So our implementation matches the approximation \(2^{-e/2}\) perfectly for even e and is off by a factor
-			\(2^{-0.5} = 1/\sqrt{2}\) for odd e. The approximation itself is of course only correct for a mantissa m=1.
+			As can be seen, the &quot;bit-magic&quot; does not always match the approximation \(2^{-e/2}\) we wanted to implement, 
+			but that&#x27;s still fine as we just need an initial guess for the Newton refinement. 
+			Our implementation matches the approximation for even e and is off by a factor \(2^{-0.5} = 1/\sqrt{2}\) for odd e.
+			The approximation itself is of course only correct for a mantissa m=1.
 			Fig. 3 shows exactly this:
-			for odd e values (x is 21=2 or 23=8) and m=1, the &quot;bit-magic&quot; is by a factor \(1/\sqrt{2}\) too
+			for odd e values (x is \(2^1=2\) or \(2^3=8\)) and m=1, the &quot;bit-magic&quot; is by a factor \(1/\sqrt{2}\) too
 			small.
 			For even e values (x is \(2^0=1\) or \(2^2=4\)) and m=1, the &quot;bit-magic&quot; matches the true
 			value exactly.
@@ -144,15 +139,15 @@
 			Further, an error is introduced if the mantissa is not exactly 1. The &quot;bit-magic&quot; is piece-wise
 			constant,
 			with the constant segments starting at odd e values, continuing over the following even e value range, and
-			ending just before the next odd e value. For an example, see Fig. 4, where a segment starts at \(2^1=2\) and
+			ending just before the next odd e value. For an example, see Fig. 3, where a segment starts at \(2^1=2\) and
 			ends before \(2^3=8\).
-			The true value is \(y_T = 1/\sqrt{x} = 1/\sqrt{(m·2^e} = 1/\sqrt{m}·2^{-e/2}\) with e fixed to the odd e
+			The true value is \(y_T = 1/\sqrt{x} = 1/\sqrt{(m \cdot 2^e} = 1/\sqrt{m} \cdot 2^{-e/2}\) with e fixed to the odd e
 			value and m running from 1 to 4. The value computed by the &quot;bit-magic&quot; is
-			\(y_M = 1/\sqrt{2} \ cdot 2^{-e/2}\).
+			\(y_M = 1/\sqrt{2} \cdot 2^{-e/2}\).
 			The relative error is \(\epsilon_{rel} = (y_M-y_T)/y_T = \frac{\sqrt{m}}{\sqrt{2}} - 1\).
 			This is exactly the behaviour which can be observed by the measured relative error as shown in Fig. 4:
-			It starts at ~-0.29 and then goes up tp ~0.41, until it jumps back to ~-0.29 again. When plotted
-			with logarithmic x-scale, a repeating pattern can be seen.
+			It starts at ~-0.29 and then goes up tp ~0.41, until it jumps back to ~-0.29 again. 
+			The relative error has a repeating pattern on a logarithmic scale.
 
 			<p>
 				<img src="fast_inv_sqrt/error.png" width="66%" class="center">
@@ -168,10 +163,10 @@
 				the
 				zero of a function, i.e. it computes y such that \(f(y)=0\). We re-formulate \(y=1/\sqrt{x}\) into a
 				zero-finding problem, that is \(f(y) = y^2-1/x = 0\). Applying the Newton update
-				\(y_{k+1}=y_k - f(y_k)/f&#x27;(y_k)\) gives a better approximation for y,
-				where f&#x27;(y) the first derivative of f(y). The maximum relative error decreases fast:
+				\(y_{k+1}=y_k - f(y_k)/f&#x27;(y_k)\) gives a better approximation for y than we had before,
+				where f&#x27;(y) is the first derivative of f(y). The maximum relative error decreases fast:
 			<ul>
-				<li>0 iteration: 41%</li>
+				<li>0 iterations: 41%</li>
 				<li>1 iteration: 6%</li>
 				<li>2 iterations: &lt;0.2%</li>
 				<li>3 iterations: &lt;0.0003%</li>
