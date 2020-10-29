@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Harald Scheidl</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.center {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<!--GRID BEGIN-->
+	<div class="pure-g">
+
+		<!--MENU BEGIN-->
+		<div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
+		<script src="create_menu.js"></script>
+		<!--MENU END-->
+
+		<!--CONTENT BEGIN-->
+		<div class="pure-u-1 pure-u-md-2-5">
+
+			<h1>Fast Inverse Square Root Hack: A simplified version</h1>
+
+			<h2>Single precision floating point numbers</h2>
+
+			<p>
+				A floating point number f is represented as \(f=s \cdot m \cdot 2^e = s \cdot m \cdot 2^{E-127}\). Here
+				s is the sign (+, -), m
+				is the
+				mantissa (digit string of the number with \(1.0 \le m \lt 2.0\)), e is the exponent and E is the
+				&quot;biased&quot;
+				exponent
+				which is actually stored in memory. As an example, \(3=+1.5 \cdot 2^1\), so s=+, m=5, e=1 and E=128. A
+				single
+				precision
+				floating point number (or float32 for short) consists of 32bit, using 1bit for the sign s, 8bit for the
+				biased exponent E, and 23bit for the mantissa.
+
+			<p>
+				<img src="fast_inv_sqrt/float32.png" width="33%" class="center">
+
+				Fig. 1: Bit-level representation of a float32 number. The first row shows the sizes of the bit fields
+				while the second row shows the offsets (zero-based numbering).
+			</p>
+			</p>
+
+			<h2>An approximation for 1/√(x)</h2>
+
+			<p>
+				We have a floating point number (ignoring the sign bit from now on) \(x=m \cdot 2^e\) and want to
+				compute \(\frac{1}{\sqrt{x}} =
+				\frac{1}{\sqrt{m \cdot 2^e}} = \frac{1}{\sqrt{m}} \cdot 2^{-e/2}\). A simple approximation would be to
+				ignore the mantissa and just care about the
+				exponent. Then we have \(\frac{1}{\sqrt{x}} \approx 2^{-e/2}\). This approximation is correct if m=1. We
+				assume positive x and
+				ignore the sign bit from now on.
+			</p>
+
+			<h2>Implementing the approximation using &quot;bit-magic&quot;</h2>
+			<p>
+				We now implement the approximation \(\frac{1}{\sqrt{x}} \approx 2^{-e/2} = 2^{-(E-127)/2} =
+				2^{-E/2+127/2}\) in C++. As already
+				mentioned, only the biased exponent E is stored in memory, and the bias term -127 is assumed implicitly.
+				We will only use one integer subtraction, one bit-shift and one bit-mask and call this procedure
+				&quot;bit-magic&quot; from now on. The steps are as follows (illustrated in Fig. 2):
+
+			<ul>
+				<li>Interpret the bits of the float32 number as an integer to allow for integer subtraction and bit
+					manipulation in C++ </li>
+				<li>Clear (set to zero) all bits except for the exponent field</li>
+				<li>The desired value of the exponent is \(-e/2 = -E/2+127/2\)</li>
+				<li>Divide the integer representation by 2 to get \(\lfloor E/2 \rfloor\) (the brackets indicate integer
+					division, e.g.
+					\(\lfloor 4/2 \rfloor=2\) and \(\lfloor 3/2 \rfloor=1\))</li>
+				<li>Instead of an integer division by 2, we can also use a bitwise right-shift of the integer (and use a
+					mask to clear the one bit shifted out of the exponent field)</li>
+				<li>float32 uses the implicit bias term, so even though in memory we have a value of \(\lfloor E/2
+					\rfloor\), this
+					actually represents the exponent \(\lfloor E/2 \rfloor -127\)</li>
+				<li>We have to correct the value in the exponent field by a value X such that the following holds:
+					\(-e/2
+					= -E/2+127/2 = X - \lfloor E/2 \rfloor - 127\)</li>
+				<li>Ignoring the integer division for a moment (i.e. ignore the brackets of \(\lfloor E/2 \rfloor\)), X
+					obviously must
+					have the value \(\frac{3 \cdot 127}{2}=190.5\)</li>
+				<li>We can&#x27;t represent 190.5 as integer, so let&#x27;s use 190 instead, later we analyze the error
+					introduced by this 0.5 offset</li>
+				<li>As the exponent field starts at bit 23, we have to shift all values 23 bits to the left (e.g.,
+					190&lt;&lt;23), however, as this is not important for the discussion it is ignored for now</li>
+				<li>In summary we have \(e_{magic} = 190 - \lfloor E/2 \rfloor - 127\), with \(2^{e_{magic}}\) the
+					approximation computed for \(\frac{1}{\sqrt{x}}\)</li>
+			</ul>
+
+			<p>
+				<img src="fast_inv_sqrt/bit_magic.png" width="90%" class="center">
+				Fig. 2: Illustration of the operations applied to the integer representation i of the float32 value.
+			</p>
+
+			</p>
+
+			<h2>Error of the &quot;bit-magic&quot;</h2>
+
+			The value produced by the &quot;bit-magic&quot; is \(2^{e_{magic}}\)
+			with \(e_{magic} = 190 - \lfloor E/2 \rfloor - 127 = - \lfloor(e+127)/2 \rfloor + 63\).
+			There are two cases to distinguish, depending on e:
+
+			\[e_{magic} =
+			\begin{cases}
+			-\lfloor (e+127)/2 \rfloor + 63 = -e/2 + 63 - 63 = -e/2 & e \quad even \\
+			-\lfloor (e+127)/2 \rfloor + 63 = -(e+127)/2 = -e/2 -63.5 + 63 = -e/2 - 0.5 & e \quad odd
+			\end{cases}
+			\]
+
+			So our implementation matches the approximation \(2^{-e/2}\) perfectly for even e and is off by a factor
+			\(2^{-0.5} = 1/\sqrt{2}\) for odd e. The approximation itself is of course only correct for a mantissa m=1.
+			Fig. 3 shows exactly this:
+			for odd e values (x is 21=2 or 23=8) and m=1, the &quot;bit-magic&quot; is by a factor \(1/\sqrt{2}\) too
+			small.
+			For even e values (x is \(2^0=1\) or \(2^2=4\)) and m=1, the &quot;bit-magic&quot; matches the true
+			value exactly.
+
+			<p>
+				<img src="fast_inv_sqrt/plot.png" width="66%" class="center">
+				Fig. 3: True value of \(1/\sqrt{x}\) in green and approximation computed by &quot;bit-magic&quot; in red
+				for the interval \(x \in [1, 16]\).
+			</p>
+
+
+			Further, an error is introduced if the mantissa is not exactly 1. The &quot;bit-magic&quot; is piece-wise
+			constant,
+			with the constant segments starting at odd e values, continuing over the following even e value range, and
+			ending just before the next odd e value. For an example, see Fig. 4, where a segment starts at \(2^1=2\) and
+			ends before \(2^3=8\).
+			The true value is \(y_T = 1/\sqrt{x} = 1/\sqrt{(m·2^e} = 1/\sqrt{m}·2^{-e/2}\) with e fixed to the odd e
+			value and m running from 1 to 4. The value computed by the &quot;bit-magic&quot; is
+			\(y_M = 1/\sqrt{2} \ cdot 2^{-e/2}\).
+			The relative error is \(\epsilon_{rel} = (y_M-y_T)/y_T = \frac{\sqrt{m}}{\sqrt{2}} - 1\).
+			This is exactly the behaviour which can be observed by the measured relative error as shown in Fig. 4:
+			It starts at ~-0.29 and then goes up tp ~0.41, until it jumps back to ~-0.29 again. When plotted
+			with logarithmic x-scale, a repeating pattern can be seen.
+
+			<p>
+				<img src="fast_inv_sqrt/error.png" width="66%" class="center">
+				Fig. 4: Relative error of the &quot;bit-magic&quot; (left) and the Newton refinement (right) for the
+				interval \(x \in [1, 16]\).
+			</p>
+
+			<h2>Newton refinement</h2>
+			<p>
+				The &quot;bit-magic&quot; gives a rough estimate for the true value, but can have a relative error of up
+				to
+				41%. To improve on this, a small number of Newton iterations is applied. Newton&#x27;s method computes
+				the
+				zero of a function, i.e. it computes y such that \(f(y)=0\). We re-formulate \(y=1/\sqrt{x}\) into a
+				zero-finding problem, that is \(f(y) = y^2-1/x = 0\). Applying the Newton update
+				\(y_{k+1}=y_k - f(y_k)/f&#x27;(y_k)\) gives a better approximation for y,
+				where f&#x27;(y) the first derivative of f(y). The maximum relative error decreases fast:
+			<ul>
+				<li>0 iteration: 41%</li>
+				<li>1 iteration: 6%</li>
+				<li>2 iterations: &lt;0.2%</li>
+				<li>3 iterations: &lt;0.0003%</li>
+			</ul>
+
+			So one or two iterations should be enough for most use-cases.
+			</p>
+
+			<h2>C++ implementation</h2>
+			<p>
+
+				<!--created with: https://tohtml.com/cpp/-->
+			<pre style="color:#000000;background:#ffffff;"><span style="color:#004a43; ">#</span><span style="color:#004a43; ">include </span><span style="color:#0000e6; ">&lt;</span><span style="color:#40015a; ">cstdint</span><span style="color:#0000e6; ">&gt;</span>
+<span style="color:#004a43; ">#</span><span style="color:#004a43; ">include </span><span style="color:#0000e6; ">&lt;</span><span style="color:#40015a; ">cstddef</span><span style="color:#0000e6; ">&gt;</span>
+
+<span style="color:#0000ff; font-weight:bold; ">float</span> fast_inv_sqrt<span style="color:#0000ff; ">(</span><span style="color:#0000ff; font-weight:bold; ">float</span> x<span style="color:#0000ff; ">)</span>
+<span style="color:#0000ff; ">{</span>
+    <span style="color:#0000ff; font-weight:bold; ">float</span> y <span style="color:#0000ff; ">=</span> x<span style="color:#0000ff; ">;</span> <span style="color:#008000; ">// y holds the current guess for 1/sqrt(x)</span>
+    uint32_t <span style="color:#0000ff; ">*</span>i <span style="color:#0000ff; ">=</span> <span style="color:#0000ff; font-weight:bold; ">reinterpret_cast</span><span style="color:#0000ff; ">&lt;</span>uint32_t <span style="color:#0000ff; ">*</span><span style="color:#0000ff; ">&gt;</span><span style="color:#0000ff; ">(</span><span style="color:#0000ff; ">&amp;</span>y<span style="color:#0000ff; ">)</span><span style="color:#0000ff; ">;</span> <span style="color:#008000; ">// i points to current guess y</span>
+
+    <span style="color:#0000ff; font-weight:bold; ">const</span> uint32_t exp_mask <span style="color:#0000ff; ">=</span> <span style="color:#800000; ">0x7F800000</span><span style="color:#0000ff; ">;</span> <span style="color:#008000; ">// 0xFF&lt;&lt;23</span>
+    <span style="color:#0000ff; font-weight:bold; ">const</span> uint32_t magic_number <span style="color:#0000ff; ">=</span> <span style="color:#800000; ">0x5f000000</span><span style="color:#0000ff; ">;</span> <span style="color:#008000; ">// 190&lt;&lt;23</span>
+
+    <span style="color:#008000; ">// initial guess using magic number</span>
+    <span style="color:#0000ff; ">*</span>i <span style="color:#0000ff; ">=</span> magic_number <span style="color:#0000ff; ">-</span> <span style="color:#0000ff; ">(</span><span style="color:#0000ff; ">(</span><span style="color:#0000ff; ">*</span>i <span style="color:#0000ff; ">&gt;</span><span style="color:#0000ff; ">&gt;</span> <span style="color:#800000; ">1</span><span style="color:#0000ff; ">)</span> <span style="color:#0000ff; ">&amp;</span> exp_mask<span style="color:#0000ff; ">)</span><span style="color:#0000ff; ">;</span>
+
+    <span style="color:#008000; ">// refine guess using small number of Newton iterations</span>
+    <span style="color:#0000ff; font-weight:bold; ">const</span> <span style="color:#0000ff; font-weight:bold; ">size_t</span> num_newton_iter <span style="color:#0000ff; ">=</span> <span style="color:#800000; ">2</span><span style="color:#0000ff; ">;</span>
+    <span style="color:#0000ff; font-weight:bold; ">for</span> <span style="color:#0000ff; ">(</span><span style="color:#0000ff; font-weight:bold; ">size_t</span> i <span style="color:#0000ff; ">=</span> <span style="color:#800000; ">0</span><span style="color:#0000ff; ">;</span> i <span style="color:#0000ff; ">&lt;</span> num_newton_iter<span style="color:#0000ff; ">;</span> <span style="color:#0000ff; ">+</span><span style="color:#0000ff; ">+</span>i<span style="color:#0000ff; ">)</span>
+    <span style="color:#0000ff; ">{</span>
+        y <span style="color:#0000ff; ">=</span> <span style="color:#0000ff; ">(</span>x <span style="color:#0000ff; ">*</span> y <span style="color:#0000ff; ">*</span> y <span style="color:#0000ff; ">+</span> <span style="color:#800000; ">1</span><span style="color:#0000ff; ">)</span> <span style="color:#0000ff; ">/</span> <span style="color:#0000ff; ">(</span><span style="color:#800000; ">2</span> <span style="color:#0000ff; ">*</span> x <span style="color:#0000ff; ">*</span> y<span style="color:#0000ff; ">)</span><span style="color:#0000ff; ">;</span>
+    <span style="color:#0000ff; ">}</span>
+
+    <span style="color:#0000ff; font-weight:bold; ">return</span> y<span style="color:#0000ff; ">;</span>
+<span style="color:#0000ff; ">}</span>
+</pre>
+
+			</p>
+
+			<h2>Conclusion</h2>
+			<p>
+				Compared to the original hack, the version analyzed in this article only uses the exponent bit field of
+				a float32 number. This gives an order of magnitude worse relative error, however, it also makes
+				analyzing the &quot;bit-magic&quot; much easier. Using only two Newton iterations drives the worst-case
+				relative
+				error down to &lt;0.2%. The implementation ignores the sign bit and does not work for de-normalized
+				float32 numbers.
+			</p>
+
+			<p><i>October 2020</i></p>
+		</div>
+		<!--CONTENT END-->
+
+	</div>
+	<!--GRID END-->
+
+
+</body>
+
+</html>

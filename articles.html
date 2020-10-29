@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Harald Scheidl</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+</head>
+
+<body>
+	
+
+	<!--GRID BEGIN-->
+	<div class="pure-g">
+
+		<!--MENU BEGIN-->
+		<div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
+		<script src="create_menu.js"></script>
+		<!--MENU END-->
+
+		<!--CONTENT BEGIN-->
+		<div class="pure-u-1 pure-u-md-2-5">
+			<h1>Articles</h1>
+
+			<table class="pure-table pure-table-bordered" style="table-layout: fixed ; width: 100%;">
+
+				<!--row1-->
+				<tr>
+
+					<td>
+						<h3>Build a Handwritten Text Recognition System using TensorFlow</h3>
+						<a href="https://towardsdatascience.com/2326a3487cd5"><img src="articles/ArticleHTR.png"
+								width="100%" /></a>
+						<p>
+							This article explains how to build a modern (handwritten) text recognition system.
+							Besides a theoretical introduction, the code of the SimpleHTR repository is discussed.
+						</p>
+					</td>
+
+					<td>
+						<h3>FAQ: Build a Handwritten Text Recognition System using TensorFlow</h3>
+						<a href="https://towardsdatascience.com/27648fb18519"><img src="articles/ArticleHTRFAQ.png"
+								width="100%" /></a>
+						<p>
+							There were some questions regarding the last article which are discussed here:
+							how to use custom datasets, how to detect text on line-level and how to compute a confidence
+							score for the recognized text.
+						</p>
+					</td>
+
+				</tr>
+				<!--row1 end-->
+
+				<!--row2-->
+				<tr>
+
+					<td>
+						<h3>An Intuitive Explanation of Connectionist Temporal Classification</h3>
+						<a href="https://towardsdatascience.com/3797e43a86c"><img src="articles/ArticleCTC.png"
+								width="100%" /></a>
+						<p>
+							CTC is an essential part of modern text and speech recognition systems.
+							This article explains how CTC works without hiding the clever ideas it is based on behind
+							complicated formulas.
+						</p>
+					</td>
+
+					<td>
+						<h3>Beam Search Decoding in CTC-trained Neural Networks</h3>
+						<a href="https://towardsdatascience.com/5a889a3d85a7"><img src="articles/ArticleBeamSearch.png"
+								width="100%" /></a>
+						<p>
+							To get the recognized text from a CTC-trained neural network, its output must be decoded.
+							Beam search decoding is a fast and well-performing algorithm which optionally can integrated
+							a character-level language model.
+						</p>
+					</td>
+
+				</tr>
+				<!--row2 end-->
+
+				<!--row3-->
+				<tr>
+
+					<td>
+						<h3>Word Beam Search: A CTC Decoding Algorithm</h3>
+						<a href="https://towardsdatascience.com/b051d28f3d2e"><img src="articles/ArticleWordBeamSearch.png"
+								width="100%" /></a>
+						<p>
+							Word beam search is an extension to the vanilla beam search algorithm.
+							It avoids spelling mistakes of words, allows arbitrary numbers and punctuation marks between
+							words and optionally makes use of a word-level language model.
+							This article gives a high-level overview of how the algorithm works.
+						</p>
+					</td>
+
+					<td>
+						<h3>What a text recognition system actually sees</h3>
+						<a href="https://towardsdatascience.com/6c04864b8a98"><img src="articles/ArticleWhatItSees.png"
+								width="100%" /></a>
+						<p>
+							What happens inside the "black box" of a text recognition system?
+							At which image-regions do they look at to identify the text?
+							Do these systems exploit some clever patterns?
+							Or do they cheat by using dataset-specific features?
+						</p>
+					</td>
+
+				</tr>
+				<!--row3 end-->
+
+				<!--row4-->
+				<tr>
+
+					<td>
+						<h3>GPU Image Processing using OpenCL</h3>
+						<a href="https://towardsdatascience.com/15e34b787480"><img src="articles/ArticleGPUImgProc.png"
+								width="100%" /></a>
+						<p>
+							Many image processing operations benefit from being computed in parallel.
+							This article shows how to boost dilation and erosion by implementing them for the GPU using
+							OpenCL.
+						</p>
+					</td>
+
+					<td>
+						<h3>Fast Inverse Square Root</h3>
+						<a href="fast_inv_sqrt.html"><img src="articles/fast_inv_sqrt.png"
+								width="100%" /></a>
+						<p>
+							Analysis of a simplified version of the famous &quot;fast inverse square root hack&quot; from the 90s.
+						</p>
+					</td>
+
+				</tr>
+				<!--row4 end-->
+
+			</table>
+
+		</div>
+		<!--CONTENT END-->
+
+	</div>
+	<!--GRID END-->
+
+
+	<!--htr-->
+
+
+	<!--grid-->
+
+
+
+</body>
+
+</html>

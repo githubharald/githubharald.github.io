@@ -2,266 +2,50 @@
 <html>
 
 <head>
-	<meta charset="utf-8"/>
-	<title>Repositories and Articles of Harald Scheidl</title>
-	<link rel="stylesheet" href="skeleton.css">
+	<meta charset="utf-8" />
+	<title>Harald Scheidl</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
 
-<!--center-->
-<div class="container">
-<section class="header">
+	<!--GRID BEGIN-->
+	<div class="pure-g">
 
-<!--content-->
-<h1>Welcome</h1>
-<p>
-My name is Harald Scheidl.
-I'm interested in computer vision, deep learning, C++ and Python.
-During my thesis I worked on handwritten text recognition with neural networks. 
-On this page I show:
-<ul>
-	<li>parts of the code from the thesis (I open-sourced most of the Python code, while keeping C++ and GPU code mostly closed-source)</li>
-	<li>thesis on handwritten text recognition and a paper about a novel CTC decoding algorithm</li>
-	<li>articles published on Towards Data Science, which are polished-up notes I made during the thesis on different topics relevant to me</li>
-</ul>
+		<!--MENU BEGIN-->
+		<div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
+		<script src="create_menu.js"></script>
+		<!--MENU END-->
 
 
-If you want to contact me, here is my email:
-<pre>python -c "print('%s_%s@hotmail.com'%('harald','scheidl'))"</pre>
-</p>
+		<!--CONTENT BEGIN-->
+		<div class="pure-u-1 pure-u-md-2-5">
 
-
-<!--htr-->
-<h2>Text recognition</h2>
-
-<!--grid-->
-<div class="container">
-
-	<!--row1-->
-	<div class="row">
-
-		<div class="one-half column">
-			<h4>SimpleHTR</h4>
-			<a href="https://github.com/githubharald/SimpleHTR"><img src="img/SimpleHTR.png" width="100%"/></a>
+			<h1>Welcome</h1>
 			<p>
-				A neural network which recognizes text contained in images.
-				The network consists of CNN, RNN and CTC layers and is implemented using Python and TensorFlow.
-				The network is kept small (outputs a sequence of at most 32 characters) by purpose to be trainable on CPUs in reasonable time.
+				My name is Harald Scheidl.
+				I'm interested in computer vision, deep learning, C++ and Python.
+				On this page I show:
+			<ul>
+				<li>Parts of the code from the thesis (I open-sourced most of the Python code, while keeping C++ and GPU
+					code mostly closed-source)</li>
+				<li>Other code that I open-sourced</li>
+				<li>Thesis on handwritten text recognition and a paper about a novel CTC decoding algorithm</li>
+				<li>Articles published on Towards Data Science, which are mostly polished-up notes I made during the thesis on
+					different topics relevant to me</li>
+			</ul>
+
+			If you want to contact me, here is my email:
+			<pre>python -c "print('%s_%s@hotmail.com'%('harald','scheidl'))"</pre>
 			</p>
 		</div>
-		
-		
-		<div class="one-half column">
-			<h4>CTCWordBeamSearch</h4>
-			<a href="https://github.com/githubharald/CTCWordBeamSearch"><img src="img/CTCWordBeamSearch.png" width="100%"/></a>
-			<p>
-				A CTC decoding algorithm which uses a dictionary to constrain recognized words, but at the same time allows arbitrary character strings (e.g. numbers) between words.
-				Results are improved compared to other decoders if a suitable dictionary and/or language model is available.
-				Implemented with C++ and Python, can be integrated into TensorFlow as a custom operation.
-			</p>
-		</div>
-	</div>
-	<!--row1 end-->
-	
-	<!--row2-->
-	<div class="row">
-	
-		<div class="one-half column">
-			<h4>CTCDecoder</h4>
-			<a href="https://github.com/githubharald/CTCDecoder"><img src="img/CTCDecoder.png" width="100%"/></a>
-			<p>
-				Some well-known CTC decoders implemented in Python: best path decoding, prefix search decoding, beam search decoding, token passing and lexicon search.
-				Additionally, the CTC loss function is included.
-			</p>
-		</div>
-		
-		<div class="one-half column">
-			<h4>DeslantImg</h4>
-			<a href="https://github.com/githubharald/DeslantImg"><img src="img/DeslantImg.png" width="100%"/></a>
-			<p>
-				This algorithm deslants the text in an image, i.e. it sets the text upright.
-				It can be used to remove cursive writing style from handwritten text. 
-				It might or might not improve the recognition results (depends on the data, you have to do experiments to see if it makes sense in your case).
-				Implemented in C++ and OpenCL.
-			</p>
-		</div>
-	
-	</div>
-	<!--row2 end-->
-	
-	<!--row3-->
-	<div class="row">
-	
-		<div class="one-half column">
-			<h4>WordSegmentation</h4>
-			<a href="https://github.com/githubharald/WordSegmentation"><img src="img/WordSegmentation.png" width="100%"/></a>
-			<p>
-				The SimpleHTR model is kept small for performance-reasons and can recognize 32 characters at most.
-				If you need to do text recognition on text-lines or sentences, you can first split the text-line into words and then feed each word separately into the classifier.
-				This repository does exactly this: it segments a line of text into words.
-				Implemented in Python.
-			</p>
-		</div>
-		
-	</div>
-	
-</div>
-<!--grid end-->
-
-
-<h2>Thesis and paper</h2>
-
-<!--grid-->
-<div class="container">
-
-	<div class="row">		
-		
-		<div class="one-half column">
-			<h4>Thesis</h4>
-			<a href="https://repositum.tuwien.ac.at/obvutwhs/download/pdf/2874742"><img src="img/Thesis.png" width="100%"/></a>
-			<p>
-				<ul>
-					<li>Title: "Handwritten text recognition in historical documents"</li>
-					<li>Contributions</li>
-					<ul>
-						<li>Analysis of different neural network architectures and parameters</li>
-						<li>Word segmentation using the output of the RNN layers</li>
-						<li>CNN-based replacement of the RNN layers (enabling a purely convolutional architecture)</li>
-						<li>Constrained CTC decoding algorithm (see paper for more details)</li>
-					</ul>
-				</ul>
-			</p>
-		</div>
-		
-		<div class="one-half column">
-			<h4>Paper</h4>
-			<a href="https://repositum.tuwien.ac.at/obvutwoa/download/pdf/2774578"><img src="img/Paper.png" width="100%"/></a>
-			<p>
-				<ul>
-					<li>Title: "Word Beam Search: A Connectionist Temporal Classification Decoding Algorithm"</li>
-					<li>Presented at the 16th International Conference on Frontiers in Handwriting Recognition, 2018, Niagara Falls, USA</li>
-					<li>Properties of proposed algorithm</li>
-					<ul>
-						<li>Decodes output of CTC-trained neural network</li>
-						<li>Words constrained by dictionary</li>
-						<li>Allows arbitrary number of non-word characters between words</li>
-						<li>Optional word-level language model</li>
-						<li>Faster than token passing</li>
-					</ul>
-				</ul>
-			</p>
-		</div>
-		
-	</div>
-</div>
-
-
-<h2>Articles</h2>
-
-<!--grid-->
-<div class="container">
-
-	<!--row1-->
-	<div class="row">		
-		
-		<div class="one-half column">
-			<h4>Build a Handwritten Text Recognition System using TensorFlow</h4>
-			<a href="https://towardsdatascience.com/2326a3487cd5"><img src="img/ArticleHTR.png" width="100%"/></a>
-			<p>
-				This article explains how to build a  modern (handwritten) text recognition system.
-				Besides a theoretical introduction, the code of the SimpleHTR repository is discussed.
-			</p>
-		</div>
-		
-		<div class="one-half column">
-			<h4>FAQ: Build a Handwritten Text Recognition System using TensorFlow</h4>
-			<a href="https://towardsdatascience.com/27648fb18519"><img src="img/ArticleHTRFAQ.png" width="100%"/></a>
-			<p>
-				There were some questions regarding the last article which are discussed here:
-				how to use custom datasets, how to detect text on line-level and how to compute a confidence score for the recognized text.
-			</p>
-		</div>
-		
-	</div>
-	<!--row1 end-->
-
-	<!--row2-->
-	<div class="row">		
-		
-		<div class="one-half column">
-			<h4>An Intuitive Explanation of Connectionist Temporal Classification</h4>
-			<a href="https://towardsdatascience.com/3797e43a86c"><img src="img/ArticleCTC.png" width="100%"/></a>
-			<p>
-				CTC is an essential part of modern text and speech recognition systems.
-				This article explains how CTC works without hiding the clever ideas it is based on behind complicated formulas.
-			</p>
-		</div>
-		
-		<div class="one-half column">
-			<h4>Beam Search Decoding in CTC-trained Neural Networks</h4>
-			<a href="https://towardsdatascience.com/5a889a3d85a7"><img src="img/ArticleBeamSearch.png" width="100%"/></a>
-			<p>
-				To get the recognized text from a CTC-trained neural network, its output must be decoded.
-				Beam search decoding is a fast and well-performing algorithm which optionally can integrated a character-level language model.
-			</p>
-		</div>
-		
-	</div>
-	<!--row2 end-->
-	
-	<!--row3-->
-	<div class="row">		
-		
-		<div class="one-half column">
-			<h4>Word Beam Search: A CTC Decoding Algorithm</h4>
-			<a href="https://towardsdatascience.com/b051d28f3d2e"><img src="img/ArticleWordBeamSearch.png" width="100%"/></a>
-			<p>
-				Word beam search is an extension to the vanilla beam search algorithm.
-				It avoids spelling mistakes of words, allows arbitrary numbers and punctuation marks between words and optionally makes use of a word-level language model.
-				This article gives a high-level overview of how the algorithm works.
-			</p>
-		</div>
-		
-		<div class="one-half column">
-			<h4>What a text recognition system actually sees</h4>
-			<a href="https://towardsdatascience.com/6c04864b8a98"><img src="img/ArticleWhatItSees.png" width="100%"/></a>
-			<p>
-				What happens inside the "black box" of a text recognition system?
-				At which image-regions do they look at to identify the text?
-				Do these systems exploit some clever patterns?
-				Or do they cheat by using dataset-specific features?
-			</p>
-		</div>
-		
-	</div>
-	<!--row3 end-->
-	
-	<!--row4-->
-	<div class="row">		
-
-		<div class="one-half column">
-			<h4>GPU Image Processing using OpenCL</h4>
-			<a href="https://towardsdatascience.com/15e34b787480"><img src="img/ArticleGPUImgProc.png" width="100%"/></a>
-			<p>
-				Many image processing operations benefit from being computed in parallel.
-				This article shows how to boost dilation and erosion by implementing them for the GPU using OpenCL.
-			</p>
-		</div>
+		<!--CONTENT END-->
 
 	</div>
-	<!--row4 end-->
-	
-	
-	
-</div>
-<!--grid end-->
-
-<!--content end-->
-</section>
-</div>
-<!--center end-->
+	<!--GRID END-->
 
 </body>
-</html>
 
+</html>
