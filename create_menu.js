@@ -5,7 +5,7 @@ s = '\
         <a href="index.html" class="pure-menu-link">Home</a>\
     </li>\
     <li class="pure-menu-item">\
-        <a href="repos.html" class="pure-menu-link">Repositories</a>\
+        <a href="code.html" class="pure-menu-link">Code</a>\
     </li>\
     <li class="pure-menu-item">\
         <a href="publications.html" class="pure-menu-link">Publications</a>\
