@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Harald Scheidl</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.center {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<!--GRID BEGIN-->
+	<div class="pure-g">
+
+		<!--MENU BEGIN-->
+		<div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
+		<script src="create_menu.js"></script>
+		<!--MENU END-->
+
+		<!--CONTENT BEGIN-->
+		<div class="pure-u-1 pure-u-md-2-5">
+			<h1>Quasi Cauchy Optimizer</h1>
+			This article contains some notes about the <a href="https://github.com/githubharald/quasi_cauchy_optimizer">quasi cauchy optimizer implementation</a>.
+			The method minimizes a function \(f(x)\) which maps an n-vector \(x\) to a scalar.
+			So \(f(x)\) could be some typical loss function used in machine learning algorithms.
+			A diagonal matrix is used to approximate the Hessian, which has the same memory-footprint as a vector.
+			This makes the method usable for high-dimensional problems (e.g. neural networks).
+
+			<h2>Weak Secant Equation</h2>
+
+			The weak secant equation is \(s^{T} \cdot y= s^{T} \cdot B_{+} \cdot s\) with the update step \(s=x_{+}-x\), 
+			the gradient difference \(y=\nabla f(x_{+})-\nabla f(x)\) and \(s^{T} \cdot y \gt 0\).
+			The \(n \times n\) matrix \(B_{+}\) is an approximation of the Hessian of \(f(x)\) which fulfills the weak secant equation.
+			Like in the standard Newton method, the update step is computed as \(s=-B^{-1} \cdot \nabla f(x)\) by solving for \(s\).
+			For more details see the paper of <a href="http://www.math.uwaterloo.ca/~hwolkowi/henry/reports/cauchy.pdf">Zhu et al</a>.
+			
+			<h3>Scaled Identity Update</h3>
+			We can use a scaled identity matrix \(D=d \cdot I\) for the Hessian approximation \(B_{+}\).
+			Inserting into the weak secant equation, this gives \(s^{T} \cdot y= s^{T} \cdot d \cdot I \cdot s\).
+			Solving for the scalar \(d\) we get \(d=\frac{s^{T} \cdot y}{s^{T} \cdot s}\).
+			This Hessian approximation uniformly scales all steepest-descent dimensions by \(\frac{1}{d}\) in the update step.
+			
+			<h3>Diagonal Update</h3>
+			Instead of the scaled identity matrix, we can also use a diagonal matrix \(D\) for the Hessian approximation.
+			There is not a unique solution for a diagonal matrix, so we narrow down the solution \(D_{+}\) to be the one most similar to the previous matrix \(D\).
+			The similarity is measured as: 
+			\[\| D_{+}-D \| = \| U \| = \sqrt{\sum{u_{ii}^2}} \]
+			By taking the smallest possible update \(U\), this keeps as much information as possible from previous iterations.
+			This gives the optimization problem \(min \| U \| \) with the weak secant equation \(s^T \cdot (D+U) \cdot s = s^T \cdot y\) as constraint.
+			The Lagrange function is: 
+			\[L(U, \lambda) = \frac{1}{2} \cdot \| U \|^2 + \lambda \cdot (s^T \cdot (D+U) \cdot s - s^T \cdot y) \]
+			Computing the partial derivatives with respect to the diagonal elements \(u_{ii}\) and \(\lambda\) and setting them to zero gives the update:
+			\[u_{ii} = \frac{s^T \cdot y - s^T \cdot D \cdot s}{\sum_{j}{s_j^4}} \cdot s_i^2\]
+			This Hessian approximation scales each steepest-descent dimension individually by \(\frac{1}{u_{ii}}\) in the update step.
+
+			<h2>Experiments</h2>
+			The results can be reproduced with the <a href="https://github.com/githubharald/quasi_cauchy_optimizer">quasi cauchy optimizer implementation</a>.
+			The implementation uses line-search. 
+			Further, it clips the Hessian approximation to positive values as a crude way to ensure moving along a descent direction.
+			Here only a small subset of the results is shown.
+			Comparing the diagonal update and the scaled identity update on multiple test-functions shows the following:
+			<ul>
+				<li>The typical test-functions (Beale, Rosenbrock, ...) have a low number of dimensions, and for these functions the scaled identity update performs better (see Fig. 1 and Table 1)</li>
+				<li>For high-dimensional functions with scale varying across dimensions, the diagonal update performs better (see Table 2)</li>
+			</ul>
+
+			<p>
+			<img src="quasi_cauchy/beale.png" width="66%" class="center">
+			Fig. 1: Path towards the minimum of the Beale test-function. Left: diagonal update. Right: scaled identity update.
+			</p>
+
+			<p>
+				<table class="pure-table pure-table-bordered" style="table-layout: fixed ; width: 100%;">
+					<thead>
+						<tr>
+							<th>Update</th>
+							<th>Error</th>
+							<th>Iteration Count</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr>
+							<td>Diagonal</td>
+							<td>0.000</td>
+							<td>172</td>
+						</tr>
+						<tr>
+							<td>Scaled Identity</td>
+							<td>0.000</td>
+							<td>33</td>
+						</tr>
+					</tbody>
+				</table>
+				Table 1: Beale test function.
+			</p>
+
+			<p>
+				<table class="pure-table pure-table-bordered" style="table-layout: fixed ; width: 100%;">
+					<thead>
+						<tr>
+							<th>Update</th>
+							<th>Error</th>
+							<th>Iteration Count</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr>
+							<td>Diagonal</td>
+							<td>0.383</td>
+							<td>185</td>
+						</tr>
+						<tr>
+							<td>Scaled Identity</td>
+							<td>0.649</td>
+							<td>501 (max. reached)</td>
+						</tr>
+					</tbody>
+				</table>
+				Table 2: 50-dimensional polynomial.
+			</p>
+
+
+			<h2>Conclusion</h2>
+			The diagonal update derived from the weak secant equation scales each gradient dimension separately. 
+			This update performs better for high-dimensional functions with scale varying across dimensions.
+			Otherwise, uniform scaling performs better.
+
+			<p><i>Harald Scheidl, 2020</i></p>
+
+		</div>
+		<!--CONTENT END-->
+
+	</div>
+	<!--GRID END-->
+
+
+</body>
+
+</html>
