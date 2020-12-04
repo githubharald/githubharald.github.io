@@ -45,7 +45,7 @@
 			The weak secant equation is \(s^{T} \cdot y= s^{T} \cdot B_{+} \cdot s\) with the update step \(s=x_{+}-x\), 
 			the gradient difference \(y=\nabla f(x_{+})-\nabla f(x)\) and \(s^{T} \cdot y \gt 0\).
 			The \(n \times n\) matrix \(B_{+}\) is an approximation of the Hessian of \(f(x)\) which fulfills the weak secant equation.
-			Like in the Newton's method, the update step is \(s=-B^{-1} \cdot \nabla f(x)\) where the steepest-descent direction \(-\nabla f(x)\) is modified by \(B^{-1}\).
+			Like in Newton's method, the update step is \(s=-B^{-1} \cdot \nabla f(x)\) where the steepest-descent direction \(-\nabla f(x)\) is scaled and rotated by \(B^{-1}\).
 			For more details see the paper of <a href="http://www.math.uwaterloo.ca/~hwolkowi/henry/reports/cauchy.pdf">Zhu et al</a>.
 			
 			<h3>Scaled Identity Update</h3>
@@ -58,7 +58,7 @@
 			Instead of the scaled identity matrix, we can also use a diagonal matrix \(D\) for the Hessian approximation.
 			There is not a unique solution for a diagonal matrix, so we narrow down the solution \(D_{+}\) to be the one most similar to the previous matrix \(D\).
 			The similarity is measured as: 
-			\[\| D_{+}-D \| = \| U \| = \sqrt{\sum{u_{ii}^2}} \]
+			\[\| D_{+}-D \| = \| U \| = \sqrt{\sum_{i}{u_{ii}^2}} \]
 			By taking the smallest possible update \(U\), this keeps as much information as possible from previous iterations.
 			This gives the optimization problem \(min \| U \| \) with the weak secant equation \(s^T \cdot (D+U) \cdot s = s^T \cdot y\) as constraint.
 			The Lagrange function is: 
@@ -137,7 +137,7 @@
 
 
 			<h2>Conclusion</h2>
-			The diagonal update derived from the weak secant equation scales each gradient dimension separately. 
+			The diagonal update derived from the weak secant equation scales each steepest descent dimension separately. 
 			This update performs better for high-dimensional functions with scale varying across dimensions.
 			Otherwise, uniform scaling performs better.
 
