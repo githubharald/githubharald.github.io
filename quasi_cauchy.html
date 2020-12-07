@@ -44,7 +44,7 @@
 
 			The weak secant equation is \(s^{T} \cdot y= s^{T} \cdot B_{+} \cdot s\) with the update step \(s=x_{+}-x\), 
 			the gradient difference \(y=\nabla f(x_{+})-\nabla f(x)\) and \(s^{T} \cdot y \gt 0\).
-			The \(n \times n\) matrix \(B_{+}\) is an approximation of the Hessian of \(f(x)\) which fulfills the weak secant equation.
+			The \(n \times n\) matrix \(B_{+}\) is an approximation of the Hessian of \(f(x)\) which satisfies the weak secant equation.
 			Like in Newton's method, the update step is \(s=-B^{-1} \cdot \nabla f(x)\) where the steepest-descent direction \(-\nabla f(x)\) is scaled and rotated by \(B^{-1}\).
 			For more details see the paper of <a href="http://www.math.uwaterloo.ca/~hwolkowi/henry/reports/cauchy.pdf">Zhu et al</a>.
 			
