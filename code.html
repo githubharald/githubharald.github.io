@@ -36,28 +36,23 @@
 							<a href="https://github.com/githubharald/SimpleHTR"><img src="code/SimpleHTR.png"
 									width="100%" /></a>
 							<p>
-								A neural network which recognizes text contained in images.
-								The network consists of CNN, RNN and CTC layers and is implemented using Python and
-								TensorFlow.
-								The network is kept small (outputs a sequence of at most 32 characters) by purpose to be
-								trainable on CPUs in reasonable time.
+								A neural network which recognizes the text in images of words.
+								The network consists of CNN, RNN and CTC layers and is implemented with TensorFlow.
+								The network is kept small (outputs a sequence of at most 32 characters).
 							</p>
 						</td>
-
 
 						<td>
-							<h3>CTCWordBeamSearch</h3>
-							<a href="https://github.com/githubharald/CTCWordBeamSearch"><img
-									src="code/CTCWordBeamSearch.png" width="100%" /></a>
+							<h3>DeslantImg</h3>
+							<a href="https://github.com/githubharald/DeslantImg"><img src="code/DeslantImg.png"
+									width="100%" /></a>
 							<p>
-								A CTC decoding algorithm which uses a dictionary to constrain recognized words, but at
-								the same time allows arbitrary character strings (e.g. numbers) between words.
-								Results are improved compared to other decoders if a suitable dictionary and/or language
-								model is available.
-								Implemented with C++ and Python, can be integrated into TensorFlow as a custom
-								operation.
+								This algorithm deslants the text in an image, i.e. it sets the text upright.
+								It can be used to remove cursive writing style from handwritten text.
+								Implemented in C++ and OpenCL.
 							</p>
 						</td>
+
 					</tr>
 					<!--row1 end-->
 
@@ -76,15 +71,16 @@
 						</td>
 
 						<td>
-							<h3>DeslantImg</h3>
-							<a href="https://github.com/githubharald/DeslantImg"><img src="code/DeslantImg.png"
-									width="100%" /></a>
+							<h3>CTCWordBeamSearch</h3>
+							<a href="https://github.com/githubharald/CTCWordBeamSearch"><img
+									src="code/CTCWordBeamSearch.png" width="100%" /></a>
 							<p>
-								This algorithm deslants the text in an image, i.e. it sets the text upright.
-								It can be used to remove cursive writing style from handwritten text.
-								It might or might not improve the recognition results (depends on the data, you have to
-								do experiments to see if it makes sense in your case).
-								Implemented in C++ and OpenCL.
+								A CTC decoding algorithm which uses a dictionary to constrain recognized words, but at
+								the same time allows arbitrary character strings (e.g. numbers) between words.
+								Results are improved compared to other decoders if a suitable dictionary and/or language
+								model is available.
+								Implemented with C++ and Python, can be integrated into TensorFlow as a custom
+								operation.
 							</p>
 						</td>
 
@@ -95,20 +91,22 @@
 					<tr>
 
 						<td>
-							<h3>WordSegmentation</h3>
-							<a href="https://github.com/githubharald/WordSegmentation"><img
-									src="code/WordSegmentation.png" width="100%" /></a>
+							<h3>WordDetectorNN</h3>
+							<a href="https://github.com/githubharald/WordDetectorNN"><img
+									src="code/WordDetectorNN.png" width="100%" /></a>
 							<p>
-								The SimpleHTR model is kept small for performance-reasons and can recognize 32
-								characters at most.
-								If you need to do text recognition on text-lines or sentences, you can first split the
-								text-line into words and then feed each word separately into the classifier.
-								This repository does exactly this: it segments a line of text into words.
-								Implemented in Python.
+								A neural network based detector for handwritten words. Implemented with PyTorch.
 							</p>
 						</td>
 
-						<td></td>
+						<td>
+							<h3>WordDetector</h3>
+							<a href="https://github.com/githubharald/WordDetector"><img
+									src="code/WordDetector.png" width="100%" /></a>
+							<p>
+								A classic image processing method which detects words in a text-line. Implemented in Python.
+							</p>
+						</td>
 
 					</tr>
 
@@ -141,7 +139,7 @@
 									width="100%" /></a>
 							<p>
 								The repository contains a C++ function which computes an approximation of the inverse square root 1/√(x).
-								It is based on &quot;bit-magic&quot; and a Newton refinement and is a simplified version of the famous hack from a 90s 3D game.
+								It is based on &quot;bit-magic&quot; and a Newton refinement and is a simplified version of a famous hack from a 90s game.
 							</p>
 						</td>
 					</tr>
@@ -156,7 +154,7 @@
 									src="code/quasi_cauchy.png" width="100%" /></a>
 							<p>
 								Implementation of the quasi cauchy optimizer.
-								It uses a diagonal approximation of the Hessian and therefore is very memory-efficient.
+								It uses a diagonal approximation of the Hessian and therefore is memory-efficient.
 							</p>
 						</td>
 
