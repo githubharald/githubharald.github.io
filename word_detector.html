@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Harald Scheidl</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.center {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<!--GRID BEGIN-->
+	<div class="pure-g">
+
+		<!--MENU BEGIN-->
+		<div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
+		<script src="create_menu.js"></script>
+		<!--MENU END-->
+
+		<!--CONTENT BEGIN-->
+		<div class="pure-u-1 pure-u-md-2-5">
+			<h1>Handwritten Word Detector</h1>
+
+			<h2>Introduction</h2>
+			This article serves as documentation for the <a href="https://github.com/githubharald/WordDetectorNN">WordDetectorNN</a> implementation. 
+			It is a neural network based detector inspired by the ideas of 
+			<a href="https://openaccess.thecvf.com/content_cvpr_2017/papers/Zhou_EAST_An_Efficient_CVPR_2017_paper.pdf">Zhou</a> 
+			and 
+			<a href="http://www.cs.tau.ac.il/~wolf/papers/dataset-agnostic-word.pdf">Axler</a>.
+			The model classifies each pixel as word (inner part or surrounding) or background pixel. 
+			For each pixel of the <i>inner word</i> class, an axis aligned bounding box (AABB) around the word is predicted. 
+			Because usually multiple AABBs per word are predicted, a clustering algorithm is applied to them. 
+			The model is trained on the IAM dataset, a sample result for the CVL dataset is shown in Fig. 1.
+
+			<p>
+				<img src="word_detector/sample.png" width="66%" class="center">
+				Fig. 1: Detected words for a sample from the CVL dataset.
+			</p>
+
+
+			<h2>Model</h2>
+			The AABBs are encoded by the following output maps of the model:
+
+			<ul>
+    		<li>3 segmentation maps with one-hot encoding:</li>
+				<ul>
+					<li>Word (inner part)</li>
+					<li>Word (surrounding)</li>
+					<li>Background</li>
+				</ul>
+    		<li>4 geometry maps encode distances between the current pixel and the AABB edges:</li>
+			<ul>
+				<li>Top</li>
+				<li>Bottom</li>
+				<li>Left</li>
+				<li>Right</li>
+			</ul>
+			</ul>
+
+			Only for pixels of the <i>inner word</i> class the bounding box geometry is learned. 
+			A <i>surrounding</i> class is added to avoid mapping both the background and the surrounding of a word to the <i>background</i> class. 
+			Fig. 2 shows an encoded AABB.
+
+			<p>
+				<img src="word_detector/encoding.png" width="100%" class="center">
+				Fig. 2: An encoded AABB with segmentation maps (red: inner part of word, green: surrounding of word, blue: background) and geometry maps (distance to top, bottom, left, right of AABB edges).
+			</p>
+
+			ResNet18 is used as a feature extractor. 
+			The model follows the typical U-shape architecture known from segmentation tasks. 
+			An image size of 448×448 is used while training. 
+			The input image is scaled down to feature maps of size 14×14 after the last layer of ResNet18. 
+			The following layers both upscale the maps, and also merge intermediate maps from ResNet18. 
+			The output maps have a size of 224×224, that is half the input width and height.
+
+
+			<h2>Loss function</h2>
+			The total loss is the sum of:
+			<ul>
+		    	<li>Segmentation loss: the segmentation is regarded as a pixelwise classification problem, therefore cross entropy loss is used</li>
+		    	<li>Geometry loss: a large AABB should be allowed to have larger error than a small AABB, therefore the intersection over union (IOU) of predicted and true AABB is a suitable error measure</li>
+			</ul>
+
+			<h2>Bounding box clustering</h2>
+			Usually, many AABBs are predicted for the same word, each slightly different, see Fig. 3. 
+			The Jaccard distance JD between two AABBs is JD=1-IOU. 
+			A distance matrix containing the (Jaccard) distances between all AABB pairs is computed. 
+			Using this distance matrix, the clustering algorithm DBSCAN computes AABB clusters. 
+			The resulting AABB is computed from the cluster members by taking the median edge positions.
+
+			<p>
+				<img src="word_detector/aabbs.png" width="33%" class="center">
+				Fig. 3: Multiple AABBs for the same word before clustering.
+			</p>
+
+			Computing the distance matrix is a performance bottleneck in the detection pipeline. 
+			Two different strategies to speed up this step are implemented:
+			<ul>
+    			<li>Only take a subset of AABBs</li>
+				<li>Compute connected components of <i>inner word</i> segmentation map, and only take a small number of AABBs per component</li>
+			</ul>
+
+			<h2>Summary</h2>
+			The model computes AABBs enclosing the detected handwritten words.
+			It encodes the AABBs with segmentation and geometry maps. 
+			A clustering step is performed to (ideally) only have one bounding box per word.
+
+			<p><i>Harald Scheidl, 2021</i></p>
+
+		</div>
+		<!--CONTENT END-->
+
+	</div>
+	<!--GRID END-->
+
+
+</body>
+
+</html>
