@@ -80,16 +80,17 @@
 			ResNet18 is used as a feature extractor. 
 			The model follows the typical U-shape architecture known from segmentation tasks. 
 			An image size of 448×448 is used while training. 
-			The input image is scaled down to feature maps of size 14×14 after the last layer of ResNet18. 
-			The following layers both upscale the maps, and also merge intermediate maps from ResNet18. 
-			The output maps have a size of 224×224, that is half the input width and height.
+			After the final layer of ResNet18, the feature maps have a size of 14×14.
+			The following layers upscale the maps step-by-step.
+			Further, they merge intermediate maps from ResNet18. 
+			The output of the neural network has a size of 224×224, that is half the input width and height.
 
 
 			<h2>Loss function</h2>
 			The total loss is the sum of:
 			<ul>
-		    	<li>Segmentation loss: the segmentation is regarded as a pixelwise classification problem, therefore cross entropy loss is used</li>
-		    	<li>Geometry loss: a large AABB should be allowed to have larger error than a small AABB, therefore the intersection over union (IOU) of predicted and true AABB is a suitable error measure</li>
+		    	<li>Segmentation loss: segmentation is regarded as a pixelwise classification problem, therefore cross entropy loss is used</li>
+		    	<li>Geometry loss: using sum-of-squared errors on the geometry would put more weight on larger bounding boxes for which larger errors can be tolerated, therefore intersection over union (IOU) is used instead</li>
 			</ul>
 
 			<h2>Bounding box clustering</h2>
@@ -114,7 +115,7 @@
 			<h2>Summary</h2>
 			The model computes AABBs enclosing the detected handwritten words.
 			It encodes the AABBs with segmentation and geometry maps. 
-			A clustering step is performed to (ideally) only have one bounding box per word.
+			A clustering step is applied to the predicted bounding boxes.
 
 			<p><i>Harald Scheidl, 2021</i></p>
 
