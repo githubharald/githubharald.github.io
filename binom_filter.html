@@ -122,8 +122,8 @@
 				<li>It has a zero at the frequency index \(k=N/2\), so this frequency gets completely removed from the signal</li>
 				<li>The frequency index \(k=N/2\) corresponds to the highest possible frequency, a signal only containing this frequency might look like:
 					\([1,-1,1,-1,...]\) </li>
-				<li>The moving average applied on such a signal adds +1 and -1 at each kernel position, which obviously
-					yields 0 as result (corresponding to the zero in the frequency response)</li>
+				<li>The moving average applied on such a signal adds +1 and -1 at position, which obviously
+					yields a sequence of zeros (corresponding to the zero in the frequency response)</li>
 				<li>An order \(i\) filter is computed by convolving an order 1 filter \(i\)-times, corresponding to
 					multiplying the frequency response \(i\)-times with itself</li>
 			</ul>
