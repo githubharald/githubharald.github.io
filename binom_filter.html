@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Harald Scheidl</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.center {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<!--GRID BEGIN-->
+	<div class="pure-g">
+
+		<!--MENU BEGIN-->
+		<div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
+		<script src="create_menu.js"></script>
+		<!--MENU END-->
+
+		<!--CONTENT BEGIN-->
+		<div class="pure-u-1 pure-u-md-2-5">
+			<h1>Binomial filters</h1>
+			<p>
+				The article is about binomial filters.
+				These filters are common in the signal and image processing domain, with the moving average filter \([\frac{1}{2},\frac{1}{2}]\) being the simplest.
+			</p>
+			<p>
+				The article shows:
+				<ul>
+					<li>How binomial filters are computed by repeatedly convolving the moving average filter with itself</li>
+					<li>How the resulting filter coefficients correspond to the binomial coefficients</li>
+					<li>The frequency response computed with the DFT</li>
+				</ul>
+
+				To keep things simple, only unnormalized filters (e.g. \([1,1]\) instead of
+				\([\frac{1}{2},\frac{1}{2}]\)) are discussed.
+			</p>
+
+			<h2>Compute binomial filter coefficients</h2>
+			<p>
+				The filter coefficients of an order \(i\) binomial filter are the coefficients found in the \(i\)-th row of 
+				<a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle">Pascal's triangle</a>.
+				As \(i\) gets larger, the filter approaches the shape of a Gaussian function.
+				The first few unnormalized filters \(b^i\) are listed in the following (superscript number denotes filter order):
+			<ul>
+				<li>\(b^0=[1]\)</li>
+				<li>\(b^1=[1, 1]\)</li>
+				<li>\(b^2=[1, 2, 1]\)</li>
+				<li>\(b^3=[1, 3, 3, 1]\)</li>
+			</ul>
+			</p>
+
+			<p>
+				<img src="binom_filter/filter_coef.png" width="66%" class="left"><br>
+				Fig. 1: Filter coefficients of \(b^1\) (left) and \(b^2\) (right).
+			</p>
+
+
+			<p>
+				Computing the filter coefficients (or equally, the rows of Pascal's triangle) can be interpreted in terms
+				of convolution: if convolving the filter \(b_1=[1, 1]\) \(i\)-times with itself, we get an order \(i\)
+				filter.
+
+				Let's assume we already have the coefficients for an order \(i-1\) filter \(b_{i-1}\) and we want to
+				compute an order \(i\) filter \(b_{i}\):
+			</p>
+
+			\[b^i_n=(b^1 * b^{i-1})_n = \sum_k{b^1_k \cdot b^{i-1}_{n-k}} = b^{i-1}_n + b^{i-1}_{n-1} \]
+
+			<p>
+				Here, \(*\) denotes convolution and the subscript number is the sequence index.
+				The result \(b^{i-1}_n + b^{i-1}_{n-1}\) essentially computes Pascal's triangle when we start with \(b^0=[1]\) in the first row:
+				take the two elements \(n\) and \(n-1\) from the row above (and zero if the element does not exist), and add them
+				together.
+				As an example, if we want to compute the order 2 filter (see Fig. 1), we get the sequence: \([0+1, 1+1,
+				1+0]=[1,2,1]\).
+			</p>
+
+			<h2>Frequency response</h2>
+			<p>
+				Here we compute the frequency response of the unnormalized order 1 filter where the superscript number
+				is
+				the filter order and the subscript number is the frequency index:
+			</p>
+
+			\[B_k^1=
+			\sum_n^{N-1}{b_n^1 \cdot e^{-j \cdot 2 \cdot \pi \cdot \frac{n \cdot k}{N}}} 
+			= e^0 + e^{-j \cdot 2 \cdot \pi \cdot \frac{k}{N}}
+			= 1 + cos(2 \cdot \pi \cdot \frac{k}{N}) - j \cdot sin(2 \cdot \pi \cdot \frac{k}{N}) \]
+
+			<p>
+				We are interested in how certain frequencies \(k\) get amplified/attenuated, so we compute the absolute value of \(B_k^1\).
+				To keep things simple, we compute the squared absolute value \(|B_k|^2\) and set \(\alpha=2 \cdot \pi
+				\cdot
+				\frac{k}{N}\).
+			</p>
+
+			\[|B_k^1|^2
+			=(1+cos(\alpha))^2 + sin(\alpha)^2
+			= 1 + 2 \cdot cos(\alpha) + cos(\alpha)^2 +sin(\alpha)^2
+			= 2 + 2 \cdot cos(\alpha)\]
+
+			<p>
+				Some observations:
+			<ul>
+				<li>The frequency response (see Fig. 2) reveals the binomial filter as a low pass</li>
+				<li>It has a maximum at the frequency index \(k=0\)</li>
+				<li>It has a zero at the frequency index \(k=N/2\), so this frequency gets completely removed from the signal</li>
+				<li>The frequency index \(k=N/2\) corresponds to the highest possible frequency, a signal only containing this frequency might look like:
+					\([1,-1,1,-1,...]\) </li>
+				<li>The moving average applied on such a signal adds +1 and -1 at each kernel position, which obviously
+					yields 0 as result (corresponding to the zero in the frequency response)</li>
+				<li>An order \(i\) filter is computed by convolving an order 1 filter \(i\)-times, corresponding to
+					multiplying the frequency response \(i\)-times with itself</li>
+			</ul>
+
+			</p>
+
+
+			<p>
+				<img src="binom_filter/freq_response.png" width="66%" class="left"><br>
+				Fig. 2: Frequency response \(|B^1|\) (left) and \(|B^2|\) (right). The frequency axis is normalized to that 1 corresponds to the sampling frequency.
+			</p>
+
+
+			<h2>Conclusion</h2>
+			<p>
+				It was shown how a binomial filters of arbitrary order \(i\) is computed by convolving the moving average filter \([1,1]\) \(i\)-times with itself.
+				Further, the frequency response for the moving average filter was derived. 
+				Higher order frequency responses of order \(i\) are computed by taking the response of the moving average filter to the power of \(i\).
+			</p>
+
+			<p><i>Harald Scheidl, 2021</i></p>
+
+		</div>
+		<!--CONTENT END-->
+
+	</div>
+	<!--GRID END-->
+
+
+</body>
+
+</html>
