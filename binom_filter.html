@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 	<meta charset="utf-8" />
@@ -10,6 +10,7 @@
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+	<meta name="description" content="Binomial filters: how to compute the filter coefficients and the frequency response. Also the generalization to 2D (images) is shown."/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		.center {
@@ -35,17 +36,20 @@
 		<div class="pure-u-1 pure-u-md-2-5">
 			<h1>Binomial filters</h1>
 			<p>
-				The article is about binomial filters.
-				These filters are common in the signal and image processing domain, with the moving average filter \([\frac{1}{2},\frac{1}{2}]\) being the simplest.
-			</p>
-			<p>
+				This article is about binomial filters.
+				These filters are common in the signal and image processing domain.
+				The best-known instance of binomial filters is the moving average filter \([\frac{1}{2},\frac{1}{2}]\).
 				The article shows:
-				<ul>
-					<li>How binomial filters are computed by repeatedly convolving the moving average filter with itself</li>
-					<li>How the resulting filter coefficients correspond to the binomial coefficients</li>
-					<li>The frequency response computed with the DFT</li>
-				</ul>
+			</p>
+			
+			<ul>
+				<li>How binomial filters are computed by repeatedly convolving the moving average filter with itself</li>
+				<li>How the resulting filter coefficients correspond to the binomial coefficients</li>
+				<li>The frequency response computed with the DFT</li>
+				<li>Generalization to the 2D case</li>
+			</ul>
 
+			<p>
 				To keep things simple, only unnormalized filters (e.g. \([1,1]\) instead of
 				\([\frac{1}{2},\frac{1}{2}]\)) are discussed.
 			</p>
@@ -54,22 +58,20 @@
 			<p>
 				The filter coefficients of an order \(i\) binomial filter are the coefficients found in the \(i\)-th row of 
 				<a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle">Pascal's triangle</a>.
-				As \(i\) gets larger, the filter approaches the shape of a Gaussian function.
 				The first few unnormalized filters \(b^i\) are listed in the following (superscript number denotes filter order):
+			</p>
+
 			<ul>
 				<li>\(b^0=[1]\)</li>
 				<li>\(b^1=[1, 1]\)</li>
 				<li>\(b^2=[1, 2, 1]\)</li>
 				<li>\(b^3=[1, 3, 3, 1]\)</li>
 			</ul>
-			</p>
 
-			<p>
-				<img src="binom_filter/filter_coef.png" width="66%" class="left"><br>
-				Fig. 1: Filter coefficients of \(b^1\) (left) and \(b^2\) (right).
-			</p>
-
-
+			
+			<img src="binom_filter/filter_coef.png" style="width:66%;" class="left" alt="Coefficients of two sample filters."><br>
+			Fig. 1: Filter coefficients of \(b^1\) (left) and \(b^2\) (right).
+			
 			<p>
 				Computing the filter coefficients (or equally, the rows of Pascal's triangle) can be interpreted in terms
 				of convolution: if convolving the filter \(b_1=[1, 1]\) \(i\)-times with itself, we get an order \(i\)
@@ -87,8 +89,18 @@
 				take the two elements \(n\) and \(n-1\) from the row above (and zero if the element does not exist), and add them
 				together.
 				As an example, if we want to compute the order 2 filter (see Fig. 1), we get the sequence: \([0+1, 1+1,
-				1+0]=[1,2,1]\).
+				1+0]=[1,2,1]\). 
+				Some observations:
 			</p>
+			
+			<ul>
+				<li>The filter coefficients are selected in a way that they remove the highest possible frequency (<a href="https://en.wikipedia.org/wiki/Nyquist_frequency">Nyquist frequency</a>) in a signal completely</li>
+				<li>A signal only containing this Nyquist frequency might look like:
+					\([1,-1,1,-1,...]\) </li>
+				<li>The moving average applied on such a signal adds +1 and -1 at position, which obviously
+					yields a sequence of zeros (corresponding to the zero in the frequency response)</li>
+				<li>As \(i\) gets larger, the filter approaches the shape of a Gaussian function</li>
+			</ul>
 
 			<h2>Frequency response</h2>
 			<p>
@@ -114,27 +126,51 @@
 			= 1 + 2 \cdot cos(\alpha) + cos(\alpha)^2 +sin(\alpha)^2
 			= 2 + 2 \cdot cos(\alpha)\]
 
-			<p>
-				Some observations:
+		
+			<p>Some observations:</p>
 			<ul>
 				<li>The frequency response (see Fig. 2) reveals the binomial filter as a low pass</li>
+				<li>There is no ripple in the response function as known from other filters </li>
 				<li>It has a maximum at the frequency index \(k=0\)</li>
-				<li>It has a zero at the frequency index \(k=N/2\), so this frequency gets completely removed from the signal</li>
-				<li>The frequency index \(k=N/2\) corresponds to the highest possible frequency, a signal only containing this frequency might look like:
-					\([1,-1,1,-1,...]\) </li>
-				<li>The moving average applied on such a signal adds +1 and -1 at position, which obviously
-					yields a sequence of zeros (corresponding to the zero in the frequency response)</li>
+				<li>It has a zero at the frequency index \(k=N/2\) , so this frequency gets completely removed from the signal</li>
+				<li>The frequency index \(k=N/2\) corresponds to the highest possible frequency (Nyquist frequency)
 				<li>An order \(i\) filter is computed by convolving an order 1 filter \(i\)-times, corresponding to
 					multiplying the frequency response \(i\)-times with itself</li>
+				<li>As \(i\) gets larger, the frequency response approaches the shape of a Gaussian function</li>
 			</ul>
 
-			</p>
+			
+			<img src="binom_filter/freq_response.png" style="width:66%;" class="left" alt="Frequency response of two sample filters."><br>
+			Fig. 2: Frequency response \(|B^1|\) (left) and \(|B^2|\) (right). The frequency axis is normalized to that 1 corresponds to the sampling frequency.
+			
 
-
+			<h2>Binomial filters in 2D</h2>
 			<p>
-				<img src="binom_filter/freq_response.png" width="66%" class="left"><br>
-				Fig. 2: Frequency response \(|B^1|\) (left) and \(|B^2|\) (right). The frequency axis is normalized to that 1 corresponds to the sampling frequency.
+				There are two ways to compute the 2D filters. 
+				Either take the outer product of two 1D filters, or start with the 2D filter \([[1,1], [1,1]]\) and convolve it with itself as in the 1D case.
+				The first few unnormalized filters \(b^i\) are listed in the following (see Fig. 3 for two samples):
 			</p>
+
+			<ul>
+				<li>\(b^0=[[1]]\)</li>
+				<li>\(b^1=[[1, 1], [1,1]]\)</li>
+				<li>\(b^2=[[1, 2, 1], [2,4,2], [1,2,1]]\)</li>
+			</ul>
+			
+			<img src="binom_filter/filter_coef_2d.png" style="width:66%;" class="left" alt="Coefficients of two sample 2D filters."><br>
+			Fig. 3: 2D filter coefficients of \(b^1\) (left) and \(b^2\) (right).
+			
+			<p>
+				The frequency response is shown in Fig. 4. 
+				It gets closer to a 2D Gaussian distribution as the order \(i\) gets larger.
+				Again, as in the 1D case, the frequency response contains no ripple.
+			</p>
+
+			
+			<img src="binom_filter/freq_response_2d.png" style="width:66%;" class="left" alt="Frequency response of two sample 2D filters."><br>
+			Fig. 4: 2D frequency response \(|B^1|\) (left) and \(|B^2|\) (right). 
+			The frequency axis is normalized to that 0.5 corresponds to the Nyquist frequency.
+			
 
 
 			<h2>Conclusion</h2>
@@ -142,6 +178,7 @@
 				It was shown how a binomial filters of arbitrary order \(i\) is computed by convolving the moving average filter \([1,1]\) \(i\)-times with itself.
 				Further, the frequency response for the moving average filter was derived. 
 				Higher order frequency responses of order \(i\) are computed by taking the response of the moving average filter to the power of \(i\).
+				2D filters can easily be computed from the 1D filters.
 			</p>
 
 			<p><i>Harald Scheidl, 2021</i></p>
