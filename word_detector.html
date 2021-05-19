@@ -35,7 +35,7 @@
 
 			<h2>Introduction</h2>
 			This article serves as documentation for the <a href="https://github.com/githubharald/WordDetectorNN">WordDetectorNN</a> implementation. 
-			It is a neural network based detector inspired by the ideas of 
+			It is a neural network based word detector inspired by the ideas of 
 			<a href="https://openaccess.thecvf.com/content_cvpr_2017/papers/Zhou_EAST_An_Efficient_CVPR_2017_paper.pdf">Zhou</a> 
 			and 
 			<a href="http://www.cs.tau.ac.il/~wolf/papers/dataset-agnostic-word.pdf">Axler</a>.
@@ -45,7 +45,7 @@
 			The model is trained on the IAM dataset, a sample result for the CVL dataset is shown in Fig. 1.
 
 			<p>
-				<img src="word_detector/sample.png" width="66%" class="center">
+				<img src="word_detector/sample.png" width="66%" class="center" alt="sample output of detector">
 				Fig. 1: Detected words for a sample from the CVL dataset.
 			</p>
 
@@ -74,7 +74,7 @@
 			Fig. 2 shows an encoded AABB.
 
 			<p>
-				<img src="word_detector/encoding.png" width="100%" class="center">
+				<img src="word_detector/encoding.png" width="100%" class="center" alt="segmentation and geometry maps">
 				Fig. 2: An encoded AABB with segmentation maps (red: inner part of word, green: surrounding of word, blue: background) and geometry maps (distance to top, bottom, left, right of AABB edges).
 			</p>
 
@@ -102,7 +102,7 @@
 			The resulting AABB is computed from the cluster members by taking the median edge positions.
 
 			<p>
-				<img src="word_detector/aabbs.png" width="33%" class="center">
+				<img src="word_detector/aabbs.png" width="33%" class="center" alt="bounding boxes before clustering">
 				Fig. 3: Multiple AABBs for the same word before clustering.
 			</p>
 
@@ -114,11 +114,13 @@
 			</ul>
 
 			<h2>Summary</h2>
+			<p>
 			The model computes AABBs enclosing the detected handwritten words.
 			It encodes the AABBs with segmentation and geometry maps. 
 			A clustering step is applied to the predicted bounding boxes.
+			</p>
 
-			<p><i>Harald Scheidl, 2021</i></p>
+			<p><i>Harald Scheidl, 2021</i><br></p>
 
 		</div>
 		<!--CONTENT END-->

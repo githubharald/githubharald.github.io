@@ -43,7 +43,7 @@
 				8bit for the biased exponent E, and 23bit for the mantissa.
 
 			<p>
-				<img src="fast_inv_sqrt/float32.png" width="33%" class="center">
+				<img src="fast_inv_sqrt/float32.png" width="33%" class="center" alt="float32 on bit-level">
 
 				Fig. 1: Bit-level representation of a float32 number. The first row shows the sizes of the bit fields
 				while the second row shows the offsets (zero-based numbering).
@@ -96,7 +96,7 @@
 			</ul>
 
 			<p>
-				<img src="fast_inv_sqrt/bit_magic.png" width="90%" class="center">
+				<img src="fast_inv_sqrt/bit_magic.png" width="90%" class="center" alt="illustration of the bit-magic">
 				Fig. 2: Illustration of the operations applied to the integer representation i of the float32 value.
 			</p>
 
@@ -126,7 +126,7 @@
 			value exactly.
 
 			<p>
-				<img src="fast_inv_sqrt/plot.png" width="66%" class="center">
+				<img src="fast_inv_sqrt/plot.png" width="66%" class="center" alt="bit-magic vs. actual value">
 				Fig. 3: True value of \(1/\sqrt{x}\) in green and approximation computed by &quot;bit-magic&quot; in red
 				for the interval \(x \in [1, 16]\).
 			</p>
@@ -146,7 +146,7 @@
 			The relative error has a repeating pattern on a logarithmic scale.
 
 			<p>
-				<img src="fast_inv_sqrt/error.png" width="66%" class="center">
+				<img src="fast_inv_sqrt/error.png" width="66%" class="center" alt="difference between actual value and computed value">
 				Fig. 4: Relative error of the &quot;bit-magic&quot; (left) and the Newton refinement (right) for the
 				interval \(x \in [1, 16]\).
 			</p>
