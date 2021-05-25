@@ -11,7 +11,7 @@
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-	<meta name="description" content="Binomial filters: how to compute the filter coefficients and the frequency response. Also the generalization to 2D (images) is shown."/>
+	<meta name="description" content="Binomial filters: how to compute the filter coefficients and the frequency response. Also the generalization to 2D (images) is shown. Includes Python code to compute the coefficients."/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 </head>
@@ -165,6 +165,40 @@
 			<img src="binomial_filters/freq_response_2d.png" style="width:66%;" class="left" alt="Frequency response of two sample 2D filters."><br>
 			Fig. 4: 2D frequency response \(|B^1|\) (left) and \(|B^2|\) (right). 
 			The frequency axis is normalized to that 0.5 corresponds to the Nyquist frequency.
+
+			<h2>Python code</h2>
+
+			<p>
+				Here is the code to compute the filter coefficients.
+				In the main function, the order 2 filter is applied to two signals.
+				The first signal gets erased completely, while the second one gets damped by a factor of 2.
+			</p>
+
+<pre style='color:#000000;background:#ffffff;'><span style='color:#000084; font-weight:bold; '>from</span> scipy.signal <span style='color:#000084; font-weight:bold; '>import</span> convolve
+<span style='color:#000084; font-weight:bold; '>import</span> numpy <span style='color:#000084; font-weight:bold; '>as</span> np
+
+
+<span style='color:#000084; font-weight:bold; '>def</span> compute_kernel(order):
+    bi = np.asarray([1])
+    <span style='color:#000084; font-weight:bold; '>for</span> _ <span style='color:#000084; font-weight:bold; '>in</span> <span style='color:#000084; font-weight:bold; '>range</span>(order):
+        bi = convolve(bi, np.asarray([1, 1]))
+    <span style='color:#000084; font-weight:bold; '>return</span> bi / bi.<span style='color:#000084; font-weight:bold; '>sum</span>()
+
+
+<span style='color:#000084; font-weight:bold; '>def</span> main():
+    bi = compute_kernel(order=2)
+
+    xs = [1, -1, 1, -1, 1, -1, 1, -1], [1, 0, -1, 0, 1, 0, -1, 0]
+    <span style='color:#000084; font-weight:bold; '>for</span> x <span style='color:#000084; font-weight:bold; '>in</span> xs:
+        y = convolve(x, bi, mode=<span style='color:#0000ff; '>'valid'</span>)
+        <span style='color:#000084; font-weight:bold; '>print</span>(f<span style='color:#0000ff; '>'{x} * {bi} = {y}'</span>)
+
+
+<span style='color:#000084; font-weight:bold; '>if</span> __name__ == <span style='color:#0000ff; '>'__main__'</span>:
+    main()
+</pre>
+<!--Created using ToHtml.com on 2021-05-25 09:51:51 UTC -->
+			
 			
 
 
@@ -173,7 +207,6 @@
 				It was shown how a binomial filters of arbitrary order \(i\) is computed by convolving the moving average filter \([1,1]\) \(i\)-times with itself.
 				Further, the frequency response for the moving average filter was derived. 
 				Higher order frequency responses of order \(i\) are computed by taking the response of the moving average filter to the power of \(i\).
-				2D filters can easily be computed from the 1D filters.
 			</p>
 
 			<p><i>Harald Scheidl, 2021</i></p>
