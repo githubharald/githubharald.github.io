@@ -11,7 +11,7 @@
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-	<meta name="description" content="The quasi cauchy optimizer uses a diagonal Hessian approximation. This makes the optimizer suitable for training neural networks."/>
+	<meta name="description" content="The quasi Cauchy optimizer is a member of the quasi Newton family. It uses a diagonal Hessian approximation. This gives a memory-efficient algorithm that is even suited for neural network training."/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
@@ -29,11 +29,11 @@
 		<!--CONTENT BEGIN-->
 		<div class="pure-u-1 pure-u-md-2-5">
 			<h1>Quasi Cauchy Optimizer</h1>
-			This article contains some notes about the <a href="https://github.com/githubharald/quasi_cauchy_optimizer">quasi cauchy optimizer implementation</a>.
-			The method minimizes a function \(f(x)\) which maps an n-vector \(x\) to a scalar.
-			So \(f(x)\) could be some typical loss function used in machine learning algorithms.
-			A diagonal matrix is used to approximate the Hessian, which has the same memory-footprint as a vector.
-			This makes the method usable for high-dimensional problems (e.g. <a href="https://arxiv.org/pdf/2009.13586.pdf">neural networks</a>).
+			This article contains some notes about the <a href="https://github.com/githubharald/quasi_cauchy_optimizer">quasi Cauchy optimizer implementation</a>.
+			The discussed method is a member of the <a href="https://en.wikipedia.org/wiki/Quasi-Newton_method">quasi Newton family</a>.
+			It minimizes a function \(f(x)\) which maps an n-vector \(x\) to a scalar, where \(f(x)\) could be a loss function used in machine learning algorithms.
+			The Hessian is approximated by a diagonal matrix satisfying the weak secant equation.
+			Because a diagonal matrix has the same memory footprint as a vector, the method is well suited for high-dimensional problems (e.g. <a href="https://arxiv.org/pdf/2009.13586.pdf">neural networks</a>).
 
 			<h2>Weak Secant Equation</h2>
 
@@ -63,7 +63,7 @@
 			This Hessian approximation scales each steepest-descent dimension individually by \(\frac{1}{u_{ii}}\) in the update step.
 
 			<h2>Experiments</h2>
-			The results can be reproduced with the <a href="https://github.com/githubharald/quasi_cauchy_optimizer">quasi cauchy optimizer implementation</a>.
+			The results can be reproduced with the <a href="https://github.com/githubharald/quasi_cauchy_optimizer">quasi Cauchy optimizer implementation</a>.
 			The implementation uses line-search. 
 			Further, it clips the Hessian approximation to positive values as a crude way to ensure moving along a descent direction.
 			Here only a small subset of the results is shown.
