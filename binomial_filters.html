@@ -31,7 +31,7 @@
 		<div class="pure-u-1 pure-u-md-2-5">
 			<h1>Binomial filters</h1>
 			<p>
-				This article is about binomial filters.
+				This article discusses binomial filters and some of its properties.
 				These filters are common in the signal and image processing domain.
 				The best-known instance of binomial filters is the moving average filter \([\frac{1}{2},\frac{1}{2}]\).
 				The article shows:
@@ -69,11 +69,11 @@
 			
 			<p>
 				Computing the filter coefficients (or equally, the rows of Pascal's triangle) can be interpreted in terms
-				of convolution: if convolving the filter \(b_1=[1, 1]\) \(i\)-times with itself, we get an order \(i\)
+				of convolution: by convolving the filter \(b^1=[1, 1]\) \(i\)-times with itself, we get an order \(i\)
 				filter.
 
-				Let's assume we already have the coefficients for an order \(i-1\) filter \(b_{i-1}\) and we want to
-				compute an order \(i\) filter \(b_{i}\):
+				Let's assume we already have the coefficients for an order \(i-1\) filter \(b^{i-1}\) and we want to
+				compute an order \(i\) filter \(b^i\):
 			</p>
 
 			\[b^i_n=(b^1 * b^{i-1})_n = \sum_k{b^1_k \cdot b^{i-1}_{n-k}} = b^{i-1}_n + b^{i-1}_{n-1} \]
@@ -89,12 +89,12 @@
 			</p>
 			
 			<ul>
-				<li>The filter coefficients are selected in a way that they remove the highest possible frequency (<a href="https://en.wikipedia.org/wiki/Nyquist_frequency">Nyquist frequency</a>) in a signal completely</li>
+				<li>The filter removes the highest possible frequency (<a href="https://en.wikipedia.org/wiki/Nyquist_frequency">Nyquist frequency</a>) in a signal completely</li>
 				<li>A signal only containing this Nyquist frequency might look like:
 					\([1,-1,1,-1,...]\) </li>
-				<li>The moving average applied on such a signal adds +1 and -1 at position, which obviously
-					yields a sequence of zeros (corresponding to the zero in the frequency response)</li>
-				<li>As \(i\) gets larger, the filter approaches the shape of a Gaussian function</li>
+				<li>The moving average applied on such a signal adds +1 and -1 at each position, which obviously
+					yields a sequence of zeros \([0, 0, 0, 0,...]\) (corresponding to the zero in the frequency response)</li>
+				<li>As \(i\) gets larger, the filter gets closer to the shape of a Gaussian function</li>
 			</ul>
 
 			<h2>Frequency response</h2>
@@ -131,7 +131,7 @@
 				<li>The frequency index \(k=N/2\) corresponds to the highest possible frequency (Nyquist frequency)
 				<li>An order \(i\) filter is computed by convolving an order 1 filter \(i\)-times, corresponding to
 					multiplying the frequency response \(i\)-times with itself</li>
-				<li>As \(i\) gets larger, the frequency response approaches the shape of a Gaussian function</li>
+				<li>As \(i\) gets larger, the frequency response gets closer to the shape of a Gaussian function</li>
 			</ul>
 
 			
