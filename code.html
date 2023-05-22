@@ -25,6 +25,7 @@
 		<!--CONTENT BEGIN-->
 		<div class="pure-u-1 pure-u-md-2-5">
 			<h1>Code</h1>
+			<p>If you prefer you can also browse the repositories on <a href="https://github.com/githubharald/">github</a>.</p>
 
 			<h2>Text detection and reading</h2>
 
@@ -35,12 +36,10 @@
 					<tr>
 
 						<td>
-							<h3><a href="https://github.com/githubharald/SimpleHTR">Handwritten text recognition model</a></h3>
-							<img src="code/SimpleHTR.png" width="100%" />
+							<h3><a href="https://github.com/githubharald/HTRPipeline">Detect and read handwritten text on pages</a></h3>
+							<img src="code/HTRPipeline.png" width="100%" />
 							<p>
-								A neural network which recognizes the text in images of words.
-								The network consists of CNN, RNN and CTC layers and is implemented with TensorFlow.
-								The network is kept small (outputs a sequence of at most 32 characters).
+								Handwritten words are detected, clustered into lines and read. 
 							</p>
 						</td>
 
@@ -53,9 +52,31 @@
 						</td>
 
 					</tr>
-					<!--row1 end-->
 
 					<!--row2-->
+					<tr>
+						<td>
+							<h3><a href="https://github.com/githubharald/SimpleHTR">Handwritten text recognition model</a></h3>
+							<img src="code/SimpleHTR.png" width="100%" />
+							<p>
+								A neural network which recognizes the text in images of words.
+								The network consists of CNN, RNN and CTC layers and is implemented with TensorFlow.
+								The network is kept small (outputs a sequence of at most 32 characters).
+							</p>
+						</td>
+
+						<td>
+							<h3><a href="https://github.com/githubharald/DeslantImg">Deslanting algorithm</a></h3>
+							<img src="code/DeslantImg.png" width="100%" />
+							<p>
+								This algorithm deslants the text in an image, i.e. it sets the text upright.
+								It can be used to remove cursive writing style from handwritten text.
+								Three implementations provided: Python, C++ and OpenCL.
+							</p>
+						</td>
+					</tr>
+
+					<!--row3-->
 					<tr>
 
 						<td>
@@ -81,9 +102,8 @@
 						</td>
 
 					</tr>
-					<!--row2 end-->
 
-					<!--row3-->
+					<!--row4-->
 					<tr>
 
 						<td>
@@ -104,19 +124,7 @@
 
 					</tr>
 
-					<!--row4-->
-					<tr>
-						<td>
-							<h3><a href="https://github.com/githubharald/DeslantImg">Deslanting algorithm</a></h3>
-							<img src="code/DeslantImg.png" width="100%" />
-							<p>
-								This algorithm deslants the text in an image, i.e. it sets the text upright.
-								It can be used to remove cursive writing style from handwritten text.
-								Three implementations provided: Python, C++ and OpenCL.
-							</p>
-						</td>
-						<td></td>
-					</tr>
+
 
 				</tbody>
 			</table>
