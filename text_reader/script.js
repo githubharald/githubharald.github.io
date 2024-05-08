@@ -13,7 +13,7 @@ document.getElementById('img_loader').addEventListener('change', set_user_img, f
 var sess = new onnx.InferenceSession();
 output_message("LOADING MODEL");
 var loadingModelPromise = sess.loadModel("text_reader/model.onnx");
-loadingModelPromise.then(() => {output_message("MODEL READY");});
+loadingModelPromise.then(() => { output_message("MODEL READY"); });
 
 
 
@@ -48,8 +48,22 @@ function set_user_img(e) {
   reader.readAsDataURL(e.target.files[0]);
 }
 
-function output_message(text){
+function output_message(text) {
   document.getElementById("output").innerText = text;
+}
+
+function softmax(probs) {
+
+  var sum = 0;
+  for (var i = 0; i < probs.length; i++) {
+    sum += Math.exp(probs[i]);
+  }
+
+  var res = [];
+  for (var i = 0; i < probs.length; i++) {
+    res.push(Math.exp(probs[i]) / sum);
+  }
+  return res;
 }
 
 
@@ -94,6 +108,33 @@ async function infer() {
     prev = labels[t];
   }
 
-  output_message('Read text: "'+s+'"')
+  // output the read text
+  output_message('Read text: "' + s + '"')
+
+
+  // visualize the output
+  var predictions_sm = []
+
+  for (var t = 0; t < num_timesteps; t++) {
+    var char_probs = [];
+    for (var c = 0; c < num_chars; c++) {
+      var prob = predictions[t * num_chars + c]
+      char_probs.push(prob)
+    }
+
+    char_probs = softmax(char_probs);
+    predictions_sm.push(char_probs);
+  }
+
+  var data = [
+    {
+      y: ["~"].concat(chars),
+      z: predictions_sm,
+      type: 'heatmap',
+      transpose: true,
+    }
+  ];
+
+  Plotly.newPlot('chart', data);
 }
 

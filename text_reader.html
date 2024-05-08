@@ -6,7 +6,7 @@
 	<title>Text Reader</title>
 	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
 	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
-	<meta name="description" content="A deep-learning based implementation of a handwritten word detector. It uses segmentation and geometry maps to encode word bounding boxes."/>
+	<meta name="description" content="Demo: Text Reader running in the Browser." />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		.center {
@@ -31,36 +31,39 @@
 		<div class="pure-u-1 pure-u-md-2-5">
 			<h1>Demo: Text Reader running in the Browser</h1>
 
-      <p>Select a sample image, or upload your own image of a handwritten word. Press "Read" to read the text in the image.</p>
+			<p>Select a sample image, or upload your own image of a handwritten word. Press "Read" to read the text in
+				the image. Both the read text and the raw neural network outputs are shown.</p>
 
-      <div>
-        <p>Select or upload image</p>
-        <img src="text_reader/1.png" style="border: 1px solid;" onclick="set_sample_img('text_reader/1.png')"/><br/>
-        <img src="text_reader/2.png" style="border: 1px solid;" onclick="set_sample_img('text_reader/2.png')"/><br/>
-        <img src="text_reader/3.png" style="border: 1px solid;" onclick="set_sample_img('text_reader/3.png')"/><br/>
-        <input type="file" id="img_loader" name="img_loader" />
-      </div>
-    
-      <div>
-        <p>Read text on selected image</p>
-        <canvas id="canvas" width="256" height="48"></canvas><br/>
-        <button onclick="infer()">Read</button>
-        <p id="output">OUTPUT</p>
-      </div>
+			<div>
+				<p>Select or upload image</p>
+				<img src="text_reader/1.png" style="border: 1px solid;"
+					onclick="set_sample_img('text_reader/1.png')" /><br />
+				<img src="text_reader/2.png" style="border: 1px solid;"
+					onclick="set_sample_img('text_reader/2.png')" /><br />
+				<img src="text_reader/3.png" style="border: 1px solid;"
+					onclick="set_sample_img('text_reader/3.png')" /><br />
+				<input type="file" id="img_loader" name="img_loader" />
+			</div>
 
-	  <p><i>Harald Scheidl</i></p>
-    </div>
-    <!--GRID END-->
-  
-  
-  </body>
+			<div>
+				<p>Read text on selected image</p>
+				<canvas id="canvas" width="256" height="48"></canvas><br />
+				<button onclick="infer()">Read</button>
+				<p id="output">OUTPUT</p>
+			</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"></script>
-  <script src="text_reader/model.js"></script>
-  <script src="text_reader/script.js"></script>
-  
-  </html>
+			<div id="chart"></div>
+
+			<p><i>Harald Scheidl</i></p>
+		</div>
+		<!--GRID END-->
 
 
+</body>
 
+<script src="https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script src="text_reader/model.js"></script>
+<script src="text_reader/script.js"></script>
 
+</html>
