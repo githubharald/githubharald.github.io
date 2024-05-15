@@ -11,9 +11,9 @@ document.getElementById('img_loader').addEventListener('change', set_user_img, f
 
 // load model
 var sess = new onnx.InferenceSession();
-output_message("LOADING MODEL");
+output_message("STATUS: LOADING MODEL");
 var loadingModelPromise = sess.loadModel("text_reader/model.onnx");
-loadingModelPromise.then(() => { output_message("MODEL READY"); });
+loadingModelPromise.then(() => { output_message("STATUS: MODEL READY"); });
 
 
 
@@ -135,6 +135,22 @@ async function infer() {
     }
   ];
 
-  Plotly.newPlot('chart', data);
+  var layout = {
+    title: {
+      text: 'Character probabilities'
+    },
+    xaxis: {
+      title: {
+        text: 'Time-step'
+      }
+    },
+    yaxis: {
+      title: {
+        text: 'Character'
+      }
+    }
+  }
+
+  Plotly.newPlot('chart', data, layout);
 }
 
