@@ -79,6 +79,10 @@
             function show_heatmap(show) {
                 let element = document.getElementById("chart");
                 element.style.display = show ? "block" : "none";
+
+                if (show) {
+                    Plotly.Plots.resize(element);
+                }
             }
 
             function write_inference_output(text, title = false) {
