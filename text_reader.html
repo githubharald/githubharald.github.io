@@ -2,61 +2,63 @@
 <html>
 
 <head>
-	<meta charset="utf-8" />
-	<title>Text Reader</title>
-	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
-	<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
-	<meta name="description" content="Demo: Text Reader running in the Browser." />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style>
-		.center {
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
-	</style>
+    <meta charset="utf-8"/>
+    <title>Text Reader</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css"/>
+    <meta name="description" content="Demo: Text Reader running in the Browser."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
 </head>
 
 <body>
 
-	<!--GRID BEGIN-->
-	<div class="pure-g">
+<!--GRID BEGIN-->
+<div class="pure-g">
 
-		<!--MENU BEGIN-->
-		<div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
-		<script src="create_menu.js"></script>
-		<!--MENU END-->
+    <!--MENU BEGIN-->
+    <div class="pure-u-1 pure-u-md-1-5" id="menu"></div>
+    <script src="create_menu.js"></script>
+    <!--MENU END-->
 
-		<!--CONTENT BEGIN-->
-		<div class="pure-u-1 pure-u-md-2-5">
-			<h1>Demo: Text Reader running in the Browser</h1>
+    <!--CONTENT BEGIN-->
+    <div class="pure-u-1 pure-u-md-2-5">
+        <h1>Demo: Text Reader running in the Browser</h1>
+        <p><b>A newer version is available directly on the <a href="index.html">landing page</a>.</b></p>
+        <p>Select a sample image, or upload your own image of a handwritten word. Press "Read" to read the text in
+            the image. Both the read text and the raw neural network outputs (character probabilities per time-step) are
+            shown.</p>
 
-			<p>Select a sample image, or upload your own image of a handwritten word. Press "Read" to read the text in
-				the image. Both the read text and the raw neural network outputs (character probabilities per time-step) are shown.</p>
+        <div>
+            <p>Select or upload an image</p>
+            <img src="text_reader/1.png" style="border: 1px solid;"
+                 onclick="set_sample_img('text_reader/1.png')"/><br/>
+            <img src="text_reader/2.png" style="border: 1px solid;"
+                 onclick="set_sample_img('text_reader/2.png')"/><br/>
+            <img src="text_reader/3.png" style="border: 1px solid;"
+                 onclick="set_sample_img('text_reader/3.png')"/><br/>
+            <input type="file" id="img_loader" name="img_loader"/>
+        </div>
 
-			<div>
-				<p>Select or upload an image</p>
-				<img src="text_reader/1.png" style="border: 1px solid;"
-					onclick="set_sample_img('text_reader/1.png')" /><br />
-				<img src="text_reader/2.png" style="border: 1px solid;"
-					onclick="set_sample_img('text_reader/2.png')" /><br />
-				<img src="text_reader/3.png" style="border: 1px solid;"
-					onclick="set_sample_img('text_reader/3.png')" /><br />
-				<input type="file" id="img_loader" name="img_loader" />
-			</div>
+        <div>
+            <p>Read text on selected image</p>
+            <canvas id="canvas" width="256" height="48"></canvas>
+            <br/>
+            <button onclick="infer()">Read</button>
+            <p id="output">OUTPUT</p>
+        </div>
 
-			<div>
-				<p>Read text on selected image</p>
-				<canvas id="canvas" width="256" height="48"></canvas><br />
-				<button onclick="infer()">Read</button>
-				<p id="output">OUTPUT</p>
-			</div>
+        <div id="chart"></div>
 
-			<div id="chart"></div>
-
-			<p><i>Harald Scheidl</i></p>
-		</div>
-		<!--GRID END-->
+        <p><i>Harald Scheidl</i></p>
+    </div>
+    <!--GRID END-->
 
 
 </body>
