@@ -13,144 +13,145 @@ document.getElementById('img_loader').addEventListener('change', set_user_img, f
 var sess = new onnx.InferenceSession();
 output_message("STATUS: LOADING MODEL");
 var loadingModelPromise = sess.loadModel("text_reader/model.onnx");
-loadingModelPromise.then(() => { output_message("STATUS: MODEL READY"); });
-
+loadingModelPromise.then(() => {
+    output_message("STATUS: MODEL READY");
+});
 
 
 // render static image in canvas
 function set_sample_img(img_name) {
-  var image = new Image();
-  image.onload = function () {
-    context.drawImage(image, 0, 0)
-  };
-  image.src = img_name;
+    var image = new Image();
+    image.onload = function () {
+        context.drawImage(image, 0, 0)
+    };
+    image.src = img_name;
 }
 
 
 // render user image in canvas
 function set_user_img(e) {
-  var reader = new FileReader();
-  reader.onload = function (event) {
-    var image = new Image();
-    image.onload = function () {
-      var f = Math.min(canvas.width / image.width, canvas.height / image.height);
-      context.fillStyle = "white";
-      context.fillRect(0, 0, canvas.width, canvas.height);
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var image = new Image();
+        image.onload = function () {
+            var f = Math.min(canvas.width / image.width, canvas.height / image.height);
+            context.fillStyle = "white";
+            context.fillRect(0, 0, canvas.width, canvas.height);
 
-      var w = image.width * f;
-      var h = image.height * f;
-      var tx = (canvas.width - w) / 2;
-      var ty = (canvas.height - h) / 2;
-      context.drawImage(image, tx, ty, w, h);
+            var w = image.width * f;
+            var h = image.height * f;
+            var tx = (canvas.width - w) / 2;
+            var ty = (canvas.height - h) / 2;
+            context.drawImage(image, tx, ty, w, h);
+        }
+        image.src = event.target.result;
     }
-    image.src = event.target.result;
-  }
-  reader.readAsDataURL(e.target.files[0]);
+    reader.readAsDataURL(e.target.files[0]);
 }
 
 function output_message(text) {
-  document.getElementById("output").innerText = text;
+    document.getElementById("output").innerText = text;
 }
 
 function softmax(probs) {
 
-  var sum = 0;
-  for (var i = 0; i < probs.length; i++) {
-    sum += Math.exp(probs[i]);
-  }
+    var sum = 0;
+    for (var i = 0; i < probs.length; i++) {
+        sum += Math.exp(probs[i]);
+    }
 
-  var res = [];
-  for (var i = 0; i < probs.length; i++) {
-    res.push(Math.exp(probs[i]) / sum);
-  }
-  return res;
+    var res = [];
+    for (var i = 0; i < probs.length; i++) {
+        res.push(Math.exp(probs[i]) / sum);
+    }
+    return res;
 }
 
 
 // infer text
 async function infer() {
-  document.getElementById("output").innerText = "RUNNING INFERENCE";
+    document.getElementById("output").innerText = "RUNNING INFERENCE";
 
-  // get selected image
-  const img_data = context.getImageData(0, 0, canvas.width, canvas.height);
-  const input = new onnx.Tensor(new Float32Array(img_data.data), "float32");
+    // get selected image
+    const img_data = context.getImageData(0, 0, canvas.width, canvas.height);
+    const input = new onnx.Tensor(new Float32Array(img_data.data), "float32");
 
-  // run inference
-  const outputMap = await sess.run([input]);
-  const outputTensor = outputMap.values().next().value;
-  const predictions = outputTensor.data;
+    // run inference
+    const outputMap = await sess.run([input]);
+    const outputTensor = outputMap.values().next().value;
+    const predictions = outputTensor.data;
 
-  // extract best label per time-step
-  var num_chars = chars.length + 1;
-  var num_timesteps = 32; // TODO: load from model
-  var labels = [];
-  for (var t = 0; t < num_timesteps; t++) {
-    var best_prob = Number.NEGATIVE_INFINITY;
-    var best_label = 0;
-    for (var c = 0; c < num_chars; c++) {
-      if (predictions[t * num_chars + c] > best_prob) {
-        best_prob = predictions[t * num_chars + c];
-        best_label = c;
-      }
+    // extract best label per time-step
+    var num_chars = chars.length + 1;
+    var num_timesteps = 32; // TODO: load from model
+    var labels = [];
+    for (var t = 0; t < num_timesteps; t++) {
+        var best_prob = Number.NEGATIVE_INFINITY;
+        var best_label = 0;
+        for (var c = 0; c < num_chars; c++) {
+            if (predictions[t * num_chars + c] > best_prob) {
+                best_prob = predictions[t * num_chars + c];
+                best_label = c;
+            }
+        }
+
+        labels.push(best_label);
     }
 
-    labels.push(best_label);
-  }
+    // ctc best path decoding
+    var s = ""
+    var prev = -1;
+    for (var t = 0; t < num_timesteps; t++) {
+        if (labels[t] != 0 && labels[t] != prev) {
+            s += chars[labels[t] - 1];
+        }
 
-  // ctc best path decoding
-  var s = ""
-  var prev = -1;
-  for (var t = 0; t < num_timesteps; t++) {
-    if (labels[t] != 0 && labels[t] != prev) {
-      s += chars[labels[t] - 1];
+        prev = labels[t];
     }
 
-    prev = labels[t];
-  }
-
-  // output the read text
-  output_message('Read text: "' + s + '"')
+    // output the read text
+    output_message('Read text: "' + s + '"')
 
 
-  // visualize the output
-  var predictions_sm = []
+    // visualize the output
+    var predictions_sm = []
 
-  for (var t = 0; t < num_timesteps; t++) {
-    var char_probs = [];
-    for (var c = 0; c < num_chars; c++) {
-      var prob = predictions[t * num_chars + c]
-      char_probs.push(prob)
+    for (var t = 0; t < num_timesteps; t++) {
+        var char_probs = [];
+        for (var c = 0; c < num_chars; c++) {
+            var prob = predictions[t * num_chars + c]
+            char_probs.push(prob)
+        }
+
+        char_probs = softmax(char_probs);
+        predictions_sm.push(char_probs);
     }
 
-    char_probs = softmax(char_probs);
-    predictions_sm.push(char_probs);
-  }
+    var data = [
+        {
+            y: ["~"].concat(chars),
+            z: predictions_sm,
+            type: 'heatmap',
+            transpose: true,
+        }
+    ];
 
-  var data = [
-    {
-      y: ["~"].concat(chars),
-      z: predictions_sm,
-      type: 'heatmap',
-      transpose: true,
+    var layout = {
+        title: {
+            text: 'Character probabilities'
+        },
+        xaxis: {
+            title: {
+                text: 'Time-step'
+            }
+        },
+        yaxis: {
+            title: {
+                text: 'Character'
+            }
+        }
     }
-  ];
 
-  var layout = {
-    title: {
-      text: 'Character probabilities'
-    },
-    xaxis: {
-      title: {
-        text: 'Time-step'
-      }
-    },
-    yaxis: {
-      title: {
-        text: 'Character'
-      }
-    }
-  }
-
-  Plotly.newPlot('chart', data, layout);
+    Plotly.newPlot('chart', data, layout);
 }
 
