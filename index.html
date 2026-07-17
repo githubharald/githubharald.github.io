@@ -30,8 +30,8 @@
         <h1>Hi there, I'm Harald Scheidl.</h1>
         <img src="main/original.png"/>
 
-        <p><b>I'm working as a computer vision engineer and I'm interested in computer vision, deep learning, C++ and
-            Python.</b></p>
+        <p><b>I'm working as a computer vision engineer and interested in computer vision, deep learning, Python, and
+            C++.</b></p>
 
         <p>
             This website is mostly about <b>detecting and reading handwritten text</b>.
@@ -40,62 +40,51 @@
             Once the model has loaded, <b>click any sample image</b> to run inference locally on your CPU.
         </p>
 
-        <!--demo images-->
-        <img src="text_reader_ort/1.png" id="sample1" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
-        <img src="text_reader_ort/2.png" id="sample2" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
-        <img src="text_reader_ort/3.png" id="sample3" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
-        <img src="text_reader_ort/4.png" id="sample4" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
+        <!--text reader demo-->
+        <div style="max-width: 650px; width: 100%; padding: 5px; background-color: #f0f0f0;border-radius: 15px">
+            <!--title, and show model status-->
+            <p><b id="demo_title">Text reader demo</b></p>
 
+            <!--demo images-->
+            <img src="text_reader_ort/1.png" id="sample1" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
+            <img src="text_reader_ort/2.png" id="sample2" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
+            <img src="text_reader_ort/3.png" id="sample3" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
+            <img src="text_reader_ort/4.png" id="sample4" style="border: 1px solid;" onclick="infer_wrapper(this)"/>
 
-        <!--program outputs-->
-        <div style="max-width: 650px; width: 100%; margin: 20px 0;">
-            <!--Show model status-->
-            <pre id="model_loading_output"></pre>
-            <pre id="inference_output"
-                 style="border: 1px solid black; border-radius: 15px; padding: 15px; margin: 1px; display: none; white-space: pre-wrap; word-break: break-all;"></pre>
-            <div id="checkbox_raw_pred" style="display: none;">
-                <input id="input_raw_pred" type="checkbox" onchange="show_heatmap(this.checked)">
-                Show Raw Predictions
+            <div id="output_container" style="display: none;">
+                <p>
+                    <b>Text reader results:</b>
+                <ul id="output_inference"></ul>
+                </p>
+
+                <div id="chart"></div>
             </div>
-            <div id="chart" style="display: none;"></div>
+
         </div>
         <script>
             const ONNX_FILE = "text_reader_ort/model_int8.onnx";
-            const INFERENCE_OUTPUT_DIV = document.getElementById("inference_output");
-            const MODEL_LOADING_OUTPUT_DIV = document.getElementById("model_loading_output");
-
-            show_heatmap(document.getElementById("input_raw_pred").checked);
+            const OUTPUT_INFERENCE_DIV = document.getElementById("output_inference");
+            const OUTPUT_CONTAINER_DIV = document.getElementById("output_container");
+            const MODEL_LOADING_OUTPUT_DIV = document.getElementById("demo_title");
 
             function infer_wrapper(e) {
-                document.getElementById("checkbox_raw_pred").style.display = "block";
+                OUTPUT_CONTAINER_DIV.style.display = "block";
                 infer(e.id, "chart");
             }
 
-            function show_heatmap(show) {
-                let element = document.getElementById("chart");
-                element.style.display = show ? "block" : "none";
-
-                if (show) {
-                    Plotly.Plots.resize(element);
-                }
-            }
-
-            function write_inference_output(text, title = false) {
-
-                INFERENCE_OUTPUT_DIV.style.display = "block";
-                if (title) {
-                    text = "<b>" + text + "</b>";
-                }
-                INFERENCE_OUTPUT_DIV.innerHTML += text + "\n";
+            function write_inference_output(k, v) {
+                const li = document.createElement('li');
+                li.innerHTML = "<b>" + k + ":</b> " + v;
+                OUTPUT_INFERENCE_DIV.appendChild(li);
             }
 
             function clear_inference_output() {
-                INFERENCE_OUTPUT_DIV.textContent = "";
+                OUTPUT_INFERENCE_DIV.innerHTML = "";
             }
 
 
             function write_model_loading_output(text) {
-                MODEL_LOADING_OUTPUT_DIV.textContent = text + "\n";
+                MODEL_LOADING_OUTPUT_DIV.textContent = "Text reader demo (" + text + ")";
             }
 
 

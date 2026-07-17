@@ -47,7 +47,7 @@ function plot(chart_element, predictions) {
 
     var data = [
         {
-            y: ["~"].concat(CHARS),
+            y: ["_"].concat(CHARS),
             z: predictions_2d,
             type: "heatmap",
             transpose: true,
@@ -68,7 +68,9 @@ function plot(chart_element, predictions) {
             title: {
                 text: "Character"
             }
-        }
+        },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
     }
 
     const config = {
@@ -103,7 +105,7 @@ function decode(predictions) {
     let best_path = ""
     let prev = -1;
     for (let t = 0; t < NUM_TIMESTEPS; t++) {
-        best_path += char_indices[t] == 0 ? "~" : CHARS[char_indices[t] - 1];
+        best_path += char_indices[t] == 0 ? "_" : CHARS[char_indices[t] - 1];
         if (char_indices[t] != 0 && char_indices[t] != prev) {
             predicted_text += CHARS[char_indices[t] - 1];
         }
@@ -116,11 +118,10 @@ function decode(predictions) {
 
 async function infer(img_element, chart_element) {
     clear_inference_output();
-    write_inference_output("INFERENCE", true);
-    write_inference_output("Processed image: " + img_element);
+    write_inference_output("Processed image", img_element);
 
     if (SESSION == null) {
-        write_inference_output("Inference session not yet ready");
+        write_inference_output("Error", "Model not loaded?");
         return;
     }
     let start = performance.now();
@@ -141,12 +142,12 @@ async function infer(img_element, chart_element) {
     const decode_time = end - start;
 
     // log outputs
-    write_inference_output("Predicted text: '" + predicted_text + "'");
-    write_inference_output("Best path (argmax): '" + best_path + "'");
-    write_inference_output("Probability: " + prob.toFixed(3));
-    write_inference_output("Time preprocessing: " + pre_process_time.toFixed(1) + "ms");
-    write_inference_output("Time inference: " + infer_time.toFixed(1) + "ms");
-    write_inference_output("Time decoding: " + decode_time.toFixed(1) + "ms");
+    write_inference_output("Decoded text", '"' + predicted_text + '"');
+    write_inference_output("Best path (argmax)", '"' + best_path + '"');
+    write_inference_output("Probability", prob.toFixed(3));
+    write_inference_output("Time preprocessing", pre_process_time.toFixed(1) + "ms");
+    write_inference_output("Time inference", infer_time.toFixed(1) + "ms");
+    write_inference_output("Time decoding", decode_time.toFixed(1) + "ms");
     plot(chart_element, predictions);
 }
 
@@ -157,11 +158,11 @@ async function init(onnx_file) {
     try {
         const start = performance.now();
 
-        write_model_loading_output("⏳ Loading model " + onnx_file + " and starting inference session");
+        write_model_loading_output("⏳ Loading model: " + onnx_file);
         SESSION = await ort.InferenceSession.create(onnx_file, {executionProviders: ["wasm"]});
         const end = performance.now();
 
-        write_model_loading_output("✅ Model loaded successfully in " + (end - start).toFixed(1) + "ms");
+        write_model_loading_output("✅ Model loaded: " + (end - start).toFixed(1) + "ms");
 
     } catch (error) {
         write_model_loading_output("❌ Error: " + error.message);
