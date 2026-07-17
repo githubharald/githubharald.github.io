@@ -8,13 +8,6 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css"/>
     <meta name="description" content="Demo: Text Reader running in the Browser."/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        .center {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
 </head>
 
 <body>
@@ -29,43 +22,46 @@
 
     <!--CONTENT BEGIN-->
     <div class="pure-u-1 pure-u-md-2-5">
-        <h1>Demo: Text Reader running in the Browser</h1>
-        <p><b>A newer version is available directly on the <a href="index.html">landing page</a>.</b></p>
-        <p>Select a sample image, or upload your own image of a handwritten word. Press "Read" to read the text in
-            the image. Both the read text and the raw neural network outputs (character probabilities per time-step) are
-            shown.</p>
+        <h1>Text Reader running in the Browser</h1>
+        <p>
+            The demo is located directly on the <a href="index.html">homepage</a>.
+            Here is an outline how the model deployment worked:
+        </p>
+        <ul>
+            <li>Trained a scaled-down version of the CRNN model used in the <a
+                    href="https://github.com/githubharald/HTRPipeline">HTRPipeline</a> repository with PyTorch (model
+                size: 2MB)
+            </li>
+            <li>Exported to ONNX (2MB)</li>
+            <li>Quantized (PTQ) from float32 to int8 (1MB) and calibrated (using min-max method) on a representative set
+                of
+                images
+            </li>
+            <li>Now coming to the web implementation: the RGBA image data taken from the selected html img tag is
+                converted to an array (1D, float32) containing the gray
+                values, which is then wrapped in a tensor (4d, BCHW, float32) which additionally holds the dimensions
+            </li>
+            <li>As the images are small, the described pre-processing is fast, even in pure JS (1ms)</li>
+            <li>onnxruntime-web is used as the inference engine</li>
+            <li>Inference runs directly on the CPU (web assembly) and takes between 10ms and 50ms, depending on the
+                device
+            </li>
+            <li>Finally, decoding (CTC best path) the output tensor is done in pure JS and takes less than 1ms</li>
+        </ul>
 
-        <div>
-            <p>Select or upload an image</p>
-            <img src="text_reader/1.png" style="border: 1px solid;"
-                 onclick="set_sample_img('text_reader/1.png')"/><br/>
-            <img src="text_reader/2.png" style="border: 1px solid;"
-                 onclick="set_sample_img('text_reader/2.png')"/><br/>
-            <img src="text_reader/3.png" style="border: 1px solid;"
-                 onclick="set_sample_img('text_reader/3.png')"/><br/>
-            <input type="file" id="img_loader" name="img_loader"/>
-        </div>
+        <p>
+            Here is a plot of the quantized model as it is used during inference
+            (dump from the inference session, plot created with <a href="https://netron.app/">netron.app</a>):
+            <a href="text_reader/model_int8.png"><img src="text_reader/model_int8.png" width="100%"/></a>
 
-        <div>
-            <p>Read text on selected image</p>
-            <canvas id="canvas" width="256" height="48"></canvas>
-            <br/>
-            <button onclick="infer()">Read</button>
-            <p id="output">OUTPUT</p>
-        </div>
+        </p>
 
-        <div id="chart"></div>
 
         <p><i>Harald Scheidl</i></p>
     </div>
     <!--GRID END-->
 
-
+</div>
 </body>
-
-<script src="https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"></script>
-<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
-<script src="text_reader/model.js"></script>
-<script src="text_reader/script.js"></script>
 
 </html>

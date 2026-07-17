@@ -38,6 +38,7 @@
             To see this in action, you can test a lightweight, quantized version of my handwritten text recognition
             model directly in your browser using the interactive demo below.
             Once the model has loaded, <b>click any sample image</b> to run inference locally on your CPU.
+            (<a href="text_reader.html">Interested how it works?</a>)
         </p>
 
         <!--text reader demo-->
@@ -54,8 +55,8 @@
             <div id="output_container" style="display: none;">
                 <p>
                     <b>Text reader results:</b>
-                <ul id="output_inference"></ul>
                 </p>
+                <ul id="output_inference"></ul>
 
                 <div id="chart"></div>
             </div>
@@ -82,11 +83,9 @@
                 OUTPUT_INFERENCE_DIV.innerHTML = "";
             }
 
-
             function write_model_loading_output(text) {
                 MODEL_LOADING_OUTPUT_DIV.textContent = "Text reader demo (" + text + ")";
             }
-
 
             // Start the application
             init(ONNX_FILE);
