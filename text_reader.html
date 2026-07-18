@@ -25,7 +25,7 @@
         <h1>Text Reader running in the Browser</h1>
         <p>
             The demo is located directly on the <a href="index.html">homepage</a>.
-            Here is an outline how the model deployment worked:
+            Here is an outline how the model deployment was done:
         </p>
         <ul>
             <li>Trained a scaled-down version of the CRNN model used in the <a
@@ -33,25 +33,27 @@
                 size: 2MB)
             </li>
             <li>Exported to ONNX (2MB)</li>
-            <li>Quantized (PTQ) from float32 to int8 (1MB) and calibrated (using min-max method) on a representative set
-                of
-                images
+            <li>Quantized (PTQ) from float32 to int8 (1MB) and calibrated (using percentile method) on a representative
+                set of images
             </li>
+            <li>LSTM stays in float32, Conv is in int8, see plot of neural network below</li>
             <li>Now coming to the web implementation: the RGBA image data taken from the selected html img tag is
-                converted to an array (1D, float32) containing the gray
-                values, which is then wrapped in a tensor (4d, BCHW, float32) which additionally holds the dimensions
+                converted to an array (1D, float32) containing the gray values,
+                which is then wrapped in a tensor (4D, BCHW, float32) which additionally holds the dimension information
             </li>
             <li>As the images are small, the described pre-processing is fast, even in pure JS (1ms)</li>
             <li>onnxruntime-web is used as the inference engine</li>
             <li>Inference runs directly on the CPU (web assembly) and takes between 10ms and 50ms, depending on the
                 device
             </li>
-            <li>Finally, decoding (CTC best path) the output tensor is done in pure JS and takes less than 1ms</li>
+            <li>Finally, decoding (with CTC best path algorithm) the output tensor is done in pure JS and takes less
+                than 1ms
+            </li>
         </ul>
 
         <p>
-            Here is a plot of the quantized model as it is used during inference
-            (dump from the inference session, plot created with <a href="https://netron.app/">netron.app</a>):
+            Here is a plot of the quantized model as used during inference
+            (dumped from an inference session, plot created with <a href="https://netron.app/">netron.app</a>):
             <a href="text_reader/model_int8.png"><img src="text_reader/model_int8.png" width="100%"/></a>
 
         </p>
